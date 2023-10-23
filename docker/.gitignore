@@ -1,0 +1,8 @@
+### Docker Data
+data/db
+
+### Application
+application/
+
+### Configuration
+.env

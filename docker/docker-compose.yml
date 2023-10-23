@@ -1,0 +1,61 @@
+version: '2'
+services:
+    db:
+        image: library/mariadb:10.1.44
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: symfony
+            MYSQL_USER: symfony
+            MYSQL_PASSWORD: symfony
+        volumes:
+            - ./data/db:/var/lib/mysql
+
+    apache:
+        build:
+            context: ./build/
+            dockerfile: Dockerfile_apache
+        container_name: sym-chat
+        restart: 'always'
+        ports:
+            - "80:80"
+        volumes:
+            - ../application:/app:cached
+        working_dir: '/app/'
+        environment:
+            # https://dockerfile.readthedocs.io/en/latest/content/DockerImages/dockerfiles/php-apache.html#php-ini-variables
+            - "php.memory_limit=1G"
+            - "PHP_DATE_TIMEZONE=Europe/Berlin"
+            - "WEB_DOCUMENT_ROOT=/app/public"
+
+    apache-xdebug:
+        build:
+            context: ./build/
+            dockerfile: Dockerfile_apache_xdebug
+        container_name: sym-chat-dev
+        restart: 'always'
+        ports:
+            - "8081:80"
+        volumes:
+            - ../application:/app:cached
+        working_dir: '/app/'
+        env_file:
+            - .env.xdebug
+        environment:
+            # https://dockerfile.readthedocs.io/en/latest/content/DockerImages/dockerfiles/php-apache.html#php-ini-variables
+            - "php.memory_limit=1G"
+            - "PHP_DATE_TIMEZONE=Europe/Berlin"
+            - "WEB_DOCUMENT_ROOT=/app/public"
+
+    mailcatcher:
+        image: tophfr/mailcatcher
+        ports:
+            - 1080:80
+
+    adminer:
+        image: adminer
+        ports:
+            - 8080:8080
+        depends_on:
+            - db

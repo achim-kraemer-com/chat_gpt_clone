@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ "$#" -gt 0 ]
+then
+    docker exec -it sym-chat $@
+else
+    docker exec -it sym-chat bash
+fi
