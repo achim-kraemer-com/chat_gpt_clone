@@ -6,6 +6,7 @@ namespace App\Service;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ChatService
@@ -35,13 +36,19 @@ class ChatService
                     'prompt' => $prompt,
                     'max_tokens' => 100,
                     'temperature' => 0.7,
-                    'model' => 'gpt-3.5-turbo',
+                    'model' => 'text-ada-001',
                 ],
             ]
         );
 
-        $responseData = $response->toArray();
+        if ($response->getStatusCode() === Response::HTTP_OK) {
+            $responseData = $response->toArray();
 
-        return $responseData['choices'][0]['text'];
+            dd($responseData);
+
+            return $responseData['choices'][0]['text'];
+        }
+
+        return (string) $response->getStatusCode();
     }
 }
