@@ -12,7 +12,7 @@
         {{ form_end(form) }}
 
         {% if answer is not empty %}
-            <p>The answer is: {{ answer }}</p>
+            <p>The answer is: {{ answer|raw|nl2br }}</p>
         {% endif %}
     </div>
 </div>
