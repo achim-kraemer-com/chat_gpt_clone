@@ -25,30 +25,45 @@ class ChatService
         $chatGPTApiUrl = $this->parameterBag->get('chat_gpt_api_url');
         $chatGPTApiKey = $this->parameterBag->get('chat_gpt_api_key');
 
-        $response = $this->httpClient->request(
-            Request::METHOD_POST,
-            $chatGPTApiUrl,
-            [
-                'headers' => [
-                    'Authorization' => "Bearer {$chatGPTApiKey}",
-                ],
-                'json' => [
-                    'prompt' => $prompt,
-                    'max_tokens' => 100,
-                    'temperature' => 0.7,
-                    'model' => 'text-ada-001',
-                ],
+        $response = $this->httpClient->request('POST', 'https://api.openai.com/v1/engines/davinci/completions', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $chatGPTApiKey,
+                'Content-Type' => 'application/json'
+            ],
+            'json' => [
+                'prompt' => $prompt,
+                'max_tokens' => 150 // Anpassen nach Bedarf
             ]
-        );
+        ]);
 
-        if ($response->getStatusCode() === Response::HTTP_OK) {
-            $responseData = $response->toArray();
+        $data = $response->toArray();
 
-            dd($responseData);
+        return $data['choices'][0]['text'] ?? 'Keine Antwort erhalten.';
 
-            return $responseData['choices'][0]['text'];
-        }
-
-        return (string) $response->getStatusCode();
+//        $response = $this->httpClient->request(
+//            Request::METHOD_POST,
+//            $chatGPTApiUrl,
+//            [
+//                'headers' => [
+//                    'Authorization' => "Bearer {$chatGPTApiKey}",
+//                ],
+//                'json' => [
+//                    'prompt' => $prompt,
+//                    'max_tokens' => 100,
+//                    'temperature' => 0.7,
+//                    'model' => 'text-ada-001',
+//                ],
+//            ]
+//        );
+//
+//        if ($response->getStatusCode() === Response::HTTP_OK) {
+//            $responseData = $response->toArray();
+//
+//            dd($responseData);
+//
+//            return $responseData['choices'][0]['text'];
+//        }
+//
+//        return (string) $response->getStatusCode();
     }
 }

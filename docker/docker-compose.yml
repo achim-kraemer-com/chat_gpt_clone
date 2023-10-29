@@ -1,7 +1,7 @@
 version: '2'
 services:
     db:
-        image: library/mariadb:10.1.44
+        image: library/mariadb:latest
         ports:
             - "3306:3306"
         environment:
