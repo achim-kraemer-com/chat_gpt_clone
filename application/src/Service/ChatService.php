@@ -4,64 +4,43 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use GuzzleHttp\Client;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Tectalic\OpenAi\Authentication;
+use Tectalic\OpenAi\Manager;
+use Tectalic\OpenAi\Models\ChatCompletions\CreateRequest;
 
 class ChatService
 {
     private ParameterBagInterface $parameterBag;
-    private HttpClientInterface $httpClient;
 
-    public function __construct(ParameterBagInterface $parameterBag, HttpClientInterface $httpClient)
+    public function __construct(ParameterBagInterface $parameterBag)
     {
         $this->parameterBag = $parameterBag;
-        $this->httpClient = $httpClient;
     }
 
     public function getAnswer(string $prompt): string
     {
-        $chatGPTApiUrl = $this->parameterBag->get('chat_gpt_api_url');
         $chatGPTApiKey = $this->parameterBag->get('chat_gpt_api_key');
 
-//        $response = $this->httpClient->request('POST', 'https://api.openai.com/v1/engines/davinci/completions', [
-//            'headers' => [
-//                'Authorization' => 'Bearer ' . $chatGPTApiKey,
-//                'Content-Type' => 'application/json'
-//            ],
-//            'json' => [
-//                'prompt' => $prompt,
-//                'max_tokens' => 150 // Anpassen nach Bedarf
-//            ]
-//        ]);
-//
-//        $data = $response->toArray();
-//
-//        return $data['choices'][0]['text'] ?? 'Keine Antwort erhalten.';
 
-        $response = $this->httpClient->request(
-            Request::METHOD_POST,
-            $chatGPTApiUrl,
-            [
-                'headers' => [
-                    'Authorization' => "Bearer {$chatGPTApiKey}",
-                ],
-                'json' => [
-                    'prompt' => $prompt,
-                    'max_tokens' => 300,
-                    'temperature' => 0.7,
-                    'model' => 'text-ada-001',
-                ],
-            ]
+        $openaiClient = Manager::build(
+            new Client(),
+            new Authentication($chatGPTApiKey)
         );
 
-        if ($response->getStatusCode() === Response::HTTP_OK) {
-            $responseData = $response->toArray();
+        $response = $openaiClient->chatCompletions()->create(
+            new CreateRequest([
+                'model' => 'gpt-4',
+                'messages' => [
+                    [
+                        'role' => 'user',
+                        'content' => $prompt,
+                    ],
+                ],
+            ])
+        )->toModel();
 
-            return $responseData['choices'][0]['text'];
-        }
-
-        return (string) $response->getStatusCode();
+        return $response->choices[0]->message->content;
     }
 }
