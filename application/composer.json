@@ -25,6 +25,7 @@
         "symfony/security-bundle": "6.2.*",
         "symfony/twig-bundle": "6.2.*",
         "symfony/validator": "6.2.*",
+        "symfony/webpack-encore-bundle": "^2.1",
         "symfony/yaml": "6.2.*",
         "symfonycasts/verify-email-bundle": "^1.14",
         "tectalic/openai": "^1.6",
