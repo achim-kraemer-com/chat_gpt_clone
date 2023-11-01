@@ -15,7 +15,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_USER')]
 class ChatController extends AbstractController
 {
-    #[Route('/', name: 'app_index', methods: ['GET', 'POST'])]
+    #[Route('/chat', name: 'app_index', methods: ['GET', 'POST'])]
     public function index(Request $request, ChatService $chatService): Response
     {
         $answer = null;
