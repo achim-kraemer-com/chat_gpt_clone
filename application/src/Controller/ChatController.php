@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Form\ChatType;
 use App\Service\ChatService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,21 +17,22 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class ChatController extends AbstractController
 {
     #[Route('/chat', name: 'app_index', methods: ['GET', 'POST'])]
-    public function index(Request $request, ChatService $chatService): Response
+    public function index(): Response
     {
-        $answer = null;
         $form = $this->createForm(ChatType::class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $prompt = $form->get('prompt')->getData();
-
-            $answer = $chatService->getAnswer($prompt);
-        }
 
         return $this->render('chat/index.html.twig', [
             'form' => $form->createView(),
-            'answer' => $answer,
         ]);
+    }
+
+    #[Route('/get-chat-answer', name: 'app_get_chat_answer', methods: ['POST'])]
+    public function getAnswer(Request $request, ChatService $chatService): JsonResponse
+    {
+        $prompt = \json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $answer['question'] = $prompt['prompt'];
+        $answer['answer'] = $chatService->getAnswer($prompt['prompt']);
+
+        return new JsonResponse($answer);
     }
 }
