@@ -4,16 +4,16 @@
 
 {% block body %}
 <input type="hidden" id="symplr-chat-answer-url" value="{{ path('app_get_chat_answer') }}">
-<div class="body_wrapper">
-    <div class="container">
-        <h3 class="text-uppercase">{{ 'Chat bot' }}</h3>
-        {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <button type="button" id="symplr-chat-button">Submit</button>
-        {{ form_end(form) }}
-
-        <div class="symplr-chat-answer-container">
-            <p class="symplr-chat-answer-text"></p>
+<div class="chat-container"></div>
+<div class="typing-container">
+    <div class="typing-content">
+        <div class="typing-textarea">
+            <textarea id="chat-input" placeholder="Enter a prompt here" required></textarea>
+            <span id="send-btn" class="material-symbols-rounded">send</span>
+        </div>
+        <div class="typing-controls">
+            <span id="theme-btn" class="material-symbols-rounded">light_mode</span>
+            <span id="delete-btn" class="material-symbols-rounded">delete</span>
         </div>
     </div>
 </div>
