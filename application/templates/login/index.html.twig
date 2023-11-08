@@ -9,19 +9,40 @@
             <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
         {% endif %}
 
-        <form action="{{ path('app_login') }}" method="post">
-            <label for="username">Email:</label>
-            <input type="text" id="username" name="_username" value="{{ last_username }}">
+        <div class="default-text">
+            <h1>symplr ChatGPT Clone</h1>
+            <p>Login and start the command prompt</p>
+        </div>
 
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="_password">
+        <div id="login-container">
+            <form action="{{ path('app_login') }}" method="post">
+                <div class="table">
+                    <div class="table-row">
+                        <div class="table-cell">
+                            <label class="login-label" for="username">Email:</label>
+                        </div>
+                        <div class="table-cell">
+                            <input type="text" id="username" name="_username" value="{{ last_username }}">
+                        </div>
+                    </div>
 
-            {# If you want to control the URL the user is redirected to on success
-            <input type="hidden" name="_target_path" value="/account"> #}
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    <div class="table-row">
+                        <div class="table-cell">
+                            <label class="login-label" for="password">Password:</label>
+                        </div>
+                        <div class="table-cell">
+                            <input type="password" id="password" name="_password">
+                        </div>
+                    </div>
+                </div>
 
-            <button type="submit">login</button>
-        </form>
+                {# If you want to control the URL the user is redirected to on success
+                <input type="hidden" name="_target_path" value="/account"> #}
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <button type="submit" class="material-symbols-outlined">login</button>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

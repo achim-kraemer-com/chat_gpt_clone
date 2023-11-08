@@ -2,6 +2,10 @@
 
 {% block title %}{{ 'Chat bot' }}{% endblock %}
 
+{% block stylesheets %}
+    {{ encore_entry_link_tags('chat') }}
+{% endblock %}
+
 {% block body %}
 <input type="hidden" id="symplr-chat-answer-url" value="{{ path('app_get_chat_answer') }}">
 <div class="chat-container"></div>
@@ -17,4 +21,8 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('chat') }}
 {% endblock %}
