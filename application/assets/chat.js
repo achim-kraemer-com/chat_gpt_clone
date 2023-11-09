@@ -66,17 +66,9 @@ const getChatResponse = (incomingChatDiv) => {
     });
 }
 
-function copyResponse(copyBtn) {
+window.copyResponse = (copyBtn) => {
     const responseTextElement = copyBtn.parentElement.querySelector('p');
-    let temp = document.createElement("textarea");
-    temp.textContent = responseTextElement.textContent;
-    document.body.appendChild(temp);
-    try {
-        document.execCommand("copy");
-    } catch (ex) {
-        navigator.clipboard.writeText(responseTextElement.textContent);
-    }
-    temp.remove();
+    navigator.clipboard.writeText(responseTextElement.textContent);
     copyBtn.textContent = 'done';
     setTimeout(() => copyBtn.textContent = 'content_copy', 1000);
 }
