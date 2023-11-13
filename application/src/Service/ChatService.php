@@ -19,28 +19,46 @@ class ChatService
         $this->parameterBag = $parameterBag;
     }
 
-    public function getAnswer(string $prompt): string
+    public function getAnswer(string $prompt, ?string $previousResponse, ?string $sessionId): array
     {
         $chatGPTApiKey = $this->parameterBag->get('chat_gpt_api_key');
 
+        $resultArray = [];
 
         $openaiClient = Manager::build(
             new Client(),
             new Authentication($chatGPTApiKey)
         );
 
+        $messages = [];
+
+        try {
+            $previousResponseArray = \json_decode($previousResponse ?? '[{}]', true);
+        } catch (\Exception $exception) {
+            dd($exception);
+        }
+
+        if (\is_array($previousResponseArray)) {
+            foreach ($previousResponseArray as $previousResponseItem) {
+                if (\array_key_exists('role', $previousResponseItem)) {
+                    $messages[] = ['role' => $previousResponseItem['role'], 'content' => $previousResponseItem['content']];
+                }
+            }
+        }
+
+        $messages[] = ['role' => 'user', 'content' => $prompt];
+
         $response = $openaiClient->chatCompletions()->create(
             new CreateRequest([
-                'model' => 'gpt-4',
-                'messages' => [
-                    [
-                        'role' => 'user',
-                        'content' => $prompt,
-                    ],
-                ],
+                'model' => 'gpt-4-1106-preview',
+                'messages' => $messages,
             ])
         )->toModel();
 
-        return $response->choices[0]->message->content;
+        $resultArray['answer'] = $response->choices[0]->message->content;
+        $resultArray['session_id'] = $response->sessionId ?? null;
+        $resultArray['id'] = $response->id ?? null;
+
+        return $resultArray;
     }
 }

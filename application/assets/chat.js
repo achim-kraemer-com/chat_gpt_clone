@@ -16,6 +16,8 @@ const deleteButton = document.querySelector('#delete-btn');
 
 let userText = null;
 const initialHeight = chatInput.scrollHeight;
+let sessionId = null;
+let previousResponse = '';
 
 const loadDataFromLocalStorage = () => {
     const themeColor = localStorage.getItem('theme-color');
@@ -28,6 +30,8 @@ const loadDataFromLocalStorage = () => {
                                 </div>`;
     chatContainer.innerHTML = localStorage.getItem('all-chats') || defaultText;
     chatContainer.scrollTo(0, chatContainer.scrollHeight);
+    sessionId = localStorage.getItem('session-id');
+    previousResponse = localStorage.getItem('previous-response');
 }
 
 loadDataFromLocalStorage();
@@ -49,16 +53,24 @@ const getChatResponse = (incomingChatDiv) => {
         },
         body: JSON.stringify({
             prompt: userText,
+            sessionId: sessionId,
+            previousResponse: previousResponse,
         })
     })
     .then(response => response.json())
     .then(data => {
-        let firstElement = document.querySelector('.symplr-chat-answer-text');
         pElement.textContent = data['answer'];
         incomingChatDiv.querySelector('.typing-animation').remove();
         incomingChatDiv.querySelector('.chat-details').appendChild(pElement);
         chatContainer.scrollTo(0, chatContainer.scrollHeight);
         localStorage.setItem('all-chats', chatContainer.innerHTML);
+        if (previousResponse === null) {
+            previousResponse = '[{"role": "user", "content": "' + userText + '"},{"role": "assistant", "content": ' + JSON.stringify(data['answer']) + '}]';
+        } else {
+            previousResponse += ',[{"role": "user", "content": "' + userText + '"},{"role": "assistant", "content": ' + JSON.stringify(data['answer']) + '}]';
+        }
+        localStorage.setItem('previous-response', previousResponse);
+        localStorage.setItem('session-id', data['id']);
     })
     .catch(error => {
         pElement.classList.add('error');
@@ -121,6 +133,8 @@ themeButton.addEventListener('click', () => {
 deleteButton.addEventListener('click', () => {
     if (confirm('Are you sure you want to delete all the chats?')) {
         localStorage.removeItem('all-chats');
+        localStorage.removeItem('session-id');
+        localStorage.removeItem('previous-response');
         loadDataFromLocalStorage();
     }
 });

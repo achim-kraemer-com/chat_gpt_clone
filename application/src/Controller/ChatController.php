@@ -30,8 +30,8 @@ class ChatController extends AbstractController
     public function getAnswer(Request $request, ChatService $chatService): JsonResponse
     {
         $prompt = \json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $answer = $chatService->getAnswer($prompt['prompt'], $prompt['previousResponse'], $prompt['sessionId']);
         $answer['question'] = $prompt['prompt'];
-        $answer['answer'] = $chatService->getAnswer($prompt['prompt']);
 
         return new JsonResponse($answer);
     }
