@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'Chat bot' }}{% endblock %}
+{% block title %}'mso digital ChatGPT Client'{% endblock %}
 
 {% block stylesheets %}
     {{ encore_entry_link_tags('chat') }}
@@ -8,6 +8,7 @@
 
 {% block body %}
 <input type="hidden" id="symplr-chat-answer-url" value="{{ path('app_get_chat_answer') }}">
+<input type="hidden" id="mso-image-url" value="/build/images/MSO-Digital-Logo-tiny.svg">
 <div class="chat-container"></div>
 <div class="typing-container">
     <div class="typing-content">
