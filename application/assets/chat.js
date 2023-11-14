@@ -64,11 +64,7 @@ const getChatResponse = (incomingChatDiv) => {
         incomingChatDiv.querySelector('.chat-details').appendChild(pElement);
         chatContainer.scrollTo(0, chatContainer.scrollHeight);
         localStorage.setItem('all-chats', chatContainer.innerHTML);
-        if (previousResponse === null) {
-            previousResponse = '[{"role": "user", "content": "' + userText + '"},{"role": "assistant", "content": ' + JSON.stringify(data['answer']) + '}]';
-        } else {
-            previousResponse += ',[{"role": "user", "content": "' + userText + '"},{"role": "assistant", "content": ' + JSON.stringify(data['answer']) + '}]';
-        }
+        previousResponse = '[{"role": "user", "content": "' + userText + '"},{"role": "assistant", "content": ' + JSON.stringify(data['answer']) + '}]';
         localStorage.setItem('previous-response', previousResponse);
         localStorage.setItem('session-id', data['id']);
     })
