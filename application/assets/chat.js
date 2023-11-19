@@ -60,9 +60,10 @@ const getChatResponse = (incomingChatDiv) => {
     })
     .then(response => response.json())
     .then(data => {
-        pElement.textContent = data['answer'];
+        // pElement.textContent = data['answer'];
+        let answer = toggleDivsWithTripleBackticks(data['answer']);
         incomingChatDiv.querySelector('.typing-animation').remove();
-        incomingChatDiv.querySelector('.chat-details').appendChild(pElement);
+        incomingChatDiv.querySelector('.chat-details').appendChild(answer);
         chatContainer.scrollTo(0, chatContainer.scrollHeight);
         localStorage.setItem('all-chats', chatContainer.innerHTML);
         previousResponse = '[{"role": "user", "content": "' + userText + '"},{"role": "assistant", "content": ' + JSON.stringify(data['answer']) + '}]';
@@ -76,7 +77,7 @@ const getChatResponse = (incomingChatDiv) => {
 }
 
 window.copyResponse = (copyBtn) => {
-    const responseTextElement = copyBtn.parentElement.querySelector('p');
+    const responseTextElement = copyBtn.parentElement.nextElementSibling.querySelector('code');
     navigator.clipboard.writeText(responseTextElement.textContent);
     copyBtn.textContent = 'done';
     setTimeout(() => copyBtn.textContent = 'content_copy', 1000);
@@ -92,7 +93,7 @@ const showTypingAnimation = () => {
                     <div class="typing-dot" style="--delay: 0.4s"></div>
                 </div>
             </div>
-            <span onclick="copyResponse(this)" class="material-symbols-rounded">content_copy</span>
+<!--            <span onclick="copyResponse(this)" class="material-symbols-rounded">content_copy</span>-->
         </div>`;
     const incomingChatDiv = createElement(html, 'incoming');
     chatContainer.appendChild(incomingChatDiv);
@@ -150,29 +151,42 @@ chatInput.addEventListener('keydown', (e) => {
 
 sendButton.addEventListener('click', handleOutgoingChat);
 
-// function toggleDivsWithTripleBackticks(input) {
-//     // Trennt den String an jedem Vorkommen von ```
-//     const segments = input.split("```");
-//
-//     // Erstellt ein Fragment, um DOM-Operationen zu optimieren
-//     const fragment = document.createDocumentFragment();
-//
-//     segments.forEach((segment, index) => {
-//         if (index % 2 === 1) {
-//             // Für Segmente zwischen ``` wird ein div erstellt
-//             const div = document.createElement('div');
-//             div.classList.add('symplr-chat-answer-code');
-//             // Ersetzt Zeilenumbrüche durch <br> und fügt sie als HTML ein
-//             div.innerHTML = segment.replace(/\n/g, "<br>");
-//             fragment.appendChild(div);
-//         } else {
-//             // Für Segmente außerhalb von ``` fügt man den Text mit Zeilenumbrüchen hinzu
-//             const textWithBreaks = segment.replace(/\n/g, "<br>");
-//             const span = document.createElement('span'); // Verwenden eines Span für diesen Teil
-//             span.innerHTML = textWithBreaks;
-//             fragment.appendChild(span);
-//         }
-//     });
-//     return fragment;
-// }
+function toggleDivsWithTripleBackticks(input) {
+    // Trennt den String an jedem Vorkommen von ```
+    const segments = input.split("```");
+
+    // Erstellt ein Fragment, um DOM-Operationen zu optimieren
+    const fragment = document.createElement('div');
+
+    segments.forEach((segment, index) => {
+        if (index % 2 === 1) {
+            const sections = segment.split("\n");
+
+            // Die erste Zeile in ein <div>-Element packen
+            const firstLine = sections.shift(); // Entfernt die erste Zeile aus dem Array
+            const divElement = document.createElement("div");
+            divElement.classList.add('symplr-chat-answer-code-title');
+            divElement.innerHTML = firstLine+`<span onclick="copyResponse(this)" class="material-symbols-rounded">content_copy</span>`;
+            fragment.appendChild(divElement);
+
+            // Den Rest in ein <p>-Element packen
+            const restText = sections.join("\n"); // Die verbleibenden Zeilen wieder zu einem Text verbinden
+            // Für Segmente zwischen ``` wird ein div erstellt
+            const preElement = document.createElement('pre');
+            preElement.classList.add('symplr-chat-code-text');
+            const codeElement = document.createElement('code');
+            codeElement.classList.add('language-'+firstLine);
+            // Ersetzt Zeilenumbrüche durch <br> und fügt sie als HTML ein
+            codeElement.textContent = restText;
+            preElement.appendChild(codeElement);
+            fragment.appendChild(preElement);
+        } else {
+            const pElement = document.createElement('p');
+            // Für Segmente außerhalb von ``` fügt man den Text mit Zeilenumbrüchen hinzu
+            pElement.textContent = segment;
+            fragment.appendChild(pElement);
+        }
+    });
+    return fragment;
+}
 
