@@ -19,7 +19,7 @@ class ChatService
         $this->parameterBag = $parameterBag;
     }
 
-    public function getAnswer(string $prompt, ?string $previousResponse, ?string $sessionId): array
+    public function getAnswer(string $prompt, ?string $previousResponse, ?string $sessionId, string $chatType): array
     {
         $chatGPTApiKey = $this->parameterBag->get('chat_gpt_api_key');
 
@@ -50,7 +50,7 @@ class ChatService
 
         $response = $openaiClient->chatCompletions()->create(
             new CreateRequest([
-                'model' => 'gpt-4-1106-preview',
+                'model' => $chatType,
                 'messages' => $messages,
             ])
         )->toModel();

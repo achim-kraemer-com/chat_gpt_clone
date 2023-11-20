@@ -13,13 +13,17 @@ const sendButton = document.querySelector('#send-btn');
 const chatContainer = document.querySelector('.chat-container');
 const themeButton = document.querySelector('#theme-btn');
 const deleteButton = document.querySelector('#delete-btn');
+const chatTypeSelection = document.querySelector('#chat-types');
 
+const defaultChatType = 'gpt-4-1106-preview';
 let userText = null;
 const initialHeight = chatInput.scrollHeight;
 let sessionId = null;
 let previousResponse = '';
+let chatType = defaultChatType;
 
 const loadDataFromLocalStorage = () => {
+    const chatType = localStorage.getItem('chat-type') || defaultChatType;
     const themeColor = localStorage.getItem('theme-color');
     document.body.classList.toggle('light-mode', themeColor === 'light_mode');
     themeButton.innerText = document.body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
@@ -33,6 +37,7 @@ const loadDataFromLocalStorage = () => {
     chatContainer.scrollTo(0, chatContainer.scrollHeight);
     sessionId = localStorage.getItem('session-id');
     previousResponse = localStorage.getItem('previous-response');
+    document.querySelector('#chat-types').value = chatType;
 }
 
 loadDataFromLocalStorage();
@@ -56,6 +61,7 @@ const getChatResponse = (incomingChatDiv) => {
             prompt: userText,
             sessionId: sessionId,
             previousResponse: previousResponse,
+            chatType: chatType,
         })
     })
     .then(response => response.json())
@@ -75,6 +81,8 @@ const getChatResponse = (incomingChatDiv) => {
         pElement.textContent = 'Ooops! Something went wrong while retrieving the response. Please try again.';
     });
 }
+
+
 
 window.copyResponse = (copyBtn) => {
     const responseTextElement = copyBtn.parentElement.nextElementSibling.querySelector('code');
@@ -150,6 +158,13 @@ chatInput.addEventListener('keydown', (e) => {
 });
 
 sendButton.addEventListener('click', handleOutgoingChat);
+
+const changeChatType = () => {
+    let changeType = chatTypeSelection.value;
+    localStorage.setItem('chat-type', changeType);
+}
+
+chatTypeSelection.addEventListener('change', changeChatType)
 
 function toggleDivsWithTripleBackticks(input) {
     // Trennt den String an jedem Vorkommen von ```

@@ -180,6 +180,19 @@ span.material-symbols-rounded {
     display: flex;
     align-items: flex-end;
 }
+.typing-content .typing-type {
+    margin-bottom: 20px;
+}
+.typing-content .typing-type #chat-types {
+    height: 55px;
+    margin-top: 21px;
+    border: 1px solid var(--incoming-chat-border);
+    background-color: var(--incoming-chat-bg);
+    border-radius: 4px;
+    color: var(--text-color);
+    margin-right: 20px;
+    padding: 0 15px 0 15px;
+}
 .typing-content .typing-textarea {
     width: 100%;
     padding: 20px 10px;
