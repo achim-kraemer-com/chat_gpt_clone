@@ -4,24 +4,33 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\User;
 use GuzzleHttp\Client;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Tectalic\OpenAi\Authentication;
 use Tectalic\OpenAi\Manager;
 use Tectalic\OpenAi\Models\ChatCompletions\CreateRequest;
 
 class ChatService
 {
-    private ParameterBagInterface $parameterBag;
+    private Security $security;
 
-    public function __construct(ParameterBagInterface $parameterBag)
+    public function __construct(Security $security)
     {
-        $this->parameterBag = $parameterBag;
+        $this->security = $security;
     }
 
     public function getAnswer(string $prompt, ?string $previousResponse, ?string $sessionId, string $chatType): array
     {
-        $chatGPTApiKey = $this->parameterBag->get('chat_gpt_api_key');
+        $user = $this->security->getUser();
+        if (!$user instanceof User) {
+            return [];
+        }
+        $unit = $user->getUnit();
+        $chatGPTApiKey = $unit->getChatGptApiToken();
+        if ($chatGPTApiKey === '') {
+            return [];
+        }
 
         $resultArray = [];
 
