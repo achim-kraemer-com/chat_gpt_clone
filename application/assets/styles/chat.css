@@ -16,6 +16,7 @@
     --incoming-chat-border: #444654;
     --outgoing-code-title: #18191A;
     --outgoing-code-text: #000000;
+    --error-message-text: #e55865
 }
 .light-mode {
     --text-color: #343541;
@@ -28,6 +29,7 @@
     --incoming-chat-border: #d9d9e3;
     --outgoing-code-title: #18191A;
     --outgoing-code-text: #000000;
+    --error-message-text: #e55865
 }
 body {
     background-color: var(--outgoing-chat-bg);
@@ -111,7 +113,7 @@ body {
     padding: 0 50px 0 25px;
 }
 .chat .chat-details p.error {
-    color: #e55865;
+    color: var(--error-message-text);
 }
 .chat .chat-details pre {
     white-space: pre-wrap;
@@ -199,6 +201,7 @@ span.material-symbols-rounded {
     display: flex;
     position: relative;
 }
+
 .typing-textarea textarea {
     width: 100%;
     height: 55px;
@@ -243,4 +246,116 @@ span.material-symbols-rounded {
     border-radius: 4px;
     background: var(--incoming-chat-bg);
     border: 1px solid var(--incoming-chat-border);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--ingoing-chat-bg);
+}
+
+.modal-content {
+    background-color: var(--outgoing-chat-bg);
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid var(--outgoing-chat-border);
+    box-shadow: 0 4px 8px 0 var(--outgoing-chat-bg);
+    border-radius: 4px;
+    width: 80%;
+    max-width: 50%;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--outgoing-chat-border);
+}
+
+.close {
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: var(--icon-color);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    text-align: right;
+    padding-top: 10px;
+}
+
+input[type="text"], input[type="password"] {
+    width: 100%;
+    height: 55px;
+    border: none;
+    resize: none;
+    font-size: 1rem;
+    max-height: 250px;
+    overflow-y: auto;
+    border-radius: 4px;
+    color: var(--text-color);
+    padding: 15px 45px 15px 20px;
+    background-color: var(--incoming-chat-bg);
+    outline: 1px solid var(--incoming-chat-border);
+    margin-bottom: 10px;
+}
+
+.tab {
+    margin-bottom: 20px;
+}
+
+.tab span {
+    color: var(--icon-color);
+    background-color: var(--icon-hover-bg);
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+#settings-save-btn {
+    color: var(--icon-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 55px;
+    width: 55px;
+    margin-left: 7px;
+    font-size: 1.4rem;
+    border-radius: 4px;
+    background: var(--incoming-chat-bg);
+    border: 1px solid var(--incoming-chat-border);
+}
+
+.tabcontent .error-message {
+    display: none;
+    font-family: "Poppins", sans-serif;
+    color: var(--error-message-text);
+}
+
+.modal-header h2 {
+    font-family: "Poppins", sans-serif;
+    color: var(--text-color);
+}
+
+.modal-body h3 {
+    font-family: "Poppins", sans-serif;
+    color: var(--text-color);
+}
+
+.modal-body label {
+    font-family: "Poppins", sans-serif;
+    color: var(--text-color);
 }

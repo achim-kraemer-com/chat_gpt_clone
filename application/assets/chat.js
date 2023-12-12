@@ -13,8 +13,13 @@ const sendButton = document.querySelector('#send-btn');
 const chatContainer = document.querySelector('.chat-container');
 const themeButton = document.querySelector('#theme-btn');
 const deleteButton = document.querySelector('#delete-btn');
+const settingsButton = document.querySelector('#settings-btn');
 const chatTypeSelection = document.querySelector('#chat-types');
+const settingsModal = document.getElementById("settingsModal");
+const settingsSaveButton = document.getElementById("settings-save-btn");
+const settingsCloseButton = document.getElementById("settings-close-btn");
 
+settingsModal.style.display = "none";
 const defaultChatType = 'gpt-4-1106-preview';
 let userText = null;
 const initialHeight = chatInput.scrollHeight;
@@ -23,7 +28,7 @@ let previousResponse = '';
 let chatType = defaultChatType;
 
 const loadDataFromLocalStorage = () => {
-    const chatType = localStorage.getItem('chat-type') || defaultChatType;
+    let chatType = localStorage.getItem('chat-type') || defaultChatType;
     const themeColor = localStorage.getItem('theme-color');
     document.body.classList.toggle('light-mode', themeColor === 'light_mode');
     themeButton.innerText = document.body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
@@ -52,6 +57,7 @@ const createElement = (html, className) => {
 const getChatResponse = (incomingChatDiv) => {
     const pElement = document.createElement('p');
     const symplrChatUrl = document.getElementById('symplr-chat-answer-url').value;
+    chatType = localStorage.getItem('chat-type');
     fetch(symplrChatUrl, {
         method: 'POST',
         headers: {
@@ -66,8 +72,7 @@ const getChatResponse = (incomingChatDiv) => {
     })
     .then(response => response.json())
     .then(data => {
-        // pElement.textContent = data['answer'];
-        let answer = toggleDivsWithTripleBackticks(data['answer']);
+        let answer = toggleDivsWithTripleBackticks(data['answer'], chatType);
         incomingChatDiv.querySelector('.typing-animation').remove();
         incomingChatDiv.querySelector('.chat-details').appendChild(answer);
         chatContainer.scrollTo(0, chatContainer.scrollHeight);
@@ -81,8 +86,6 @@ const getChatResponse = (incomingChatDiv) => {
         pElement.textContent = 'Ooops! Something went wrong while retrieving the response. Please try again.';
     });
 }
-
-
 
 window.copyResponse = (copyBtn) => {
     const responseTextElement = copyBtn.parentElement.nextElementSibling.querySelector('code');
@@ -101,7 +104,6 @@ const showTypingAnimation = () => {
                     <div class="typing-dot" style="--delay: 0.4s"></div>
                 </div>
             </div>
-<!--            <span onclick="copyResponse(this)" class="material-symbols-rounded">content_copy</span>-->
         </div>`;
     const incomingChatDiv = createElement(html, 'incoming');
     chatContainer.appendChild(incomingChatDiv);
@@ -145,6 +147,10 @@ deleteButton.addEventListener('click', () => {
     }
 });
 
+settingsButton.addEventListener('click', () => {
+    settingsModal.style.display = "block";
+});
+
 chatInput.addEventListener('input', () => {
     chatInput.style.height = `${initialHeight}px`;
     chatInput.style.height = `${chatInput.scrollHeight}px`;
@@ -159,6 +165,84 @@ chatInput.addEventListener('keydown', (e) => {
 
 sendButton.addEventListener('click', handleOutgoingChat);
 
+function isPasswordSecure(password) {
+    // Mindestens ein Großbuchstabe, ein Kleinbuchstabe, eine Zahl und ein Sonderzeichen
+    return /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).+$/.test(password);
+}
+
+function isValidEmail(email) {
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    return emailRegex.test(email);
+}
+
+settingsSaveButton.addEventListener('click', () => {
+    const symplrChatUrl = document.getElementById('symplr-save-settings-url').value;
+    const chatGptApiToken = document.getElementById('chat-gpt-api-token').value;
+    const newPasswordOne = document.getElementById('new-password-one').value;
+    const newPasswordTwo = document.getElementById('new-password-two').value;
+    const newUserEmail = document.getElementById('new-user-email').value;
+    const isAdmin = document.getElementById('is-admin');
+    const passwordErrorMessage = document.getElementById('password-error-message');
+    if (chatGptApiToken === '') {
+        const chatGptApiTokenErrorMessage = document.getElementById('chatgpt-api-token-error-message');
+        chatGptApiTokenErrorMessage.innerText = 'Der ChatGPT API Token ist ungültig';
+        chatGptApiTokenErrorMessage.style.display = 'block';
+        openTab('tab1');
+        return;
+    }
+    if (newPasswordOne !== '') {
+        if (newPasswordOne.length < 12) {
+            passwordErrorMessage.innerText = 'Mindestlänge von 12 Zeiche';
+            passwordErrorMessage.style.display = 'block';
+            openTab('tab2');
+            return;
+        } else if (!isPasswordSecure(newPasswordOne)) {
+            passwordErrorMessage.innerText = 'Mindestens ein Großbuchstabe, ein Kleinbuchstabe, eine Zahl und ein Sonderzeichen';
+            passwordErrorMessage.style.display = 'block';
+            openTab('tab2');
+            return;
+        } else if (newPasswordOne !== newPasswordTwo) {
+            passwordErrorMessage.innerText = 'Die Passwörter sind unterschiedlich';
+            passwordErrorMessage.style.display = 'block';
+            openTab('tab2');
+            return;
+        }
+    }
+    if (newUserEmail !== '' && !isValidEmail(newUserEmail)) {
+        const emailErrorMessage = document.getElementById('email-error-message');
+        emailErrorMessage.innerText = 'Die E-Mail-Adresse ist ungültig';
+        emailErrorMessage.style.display = 'block';
+        openTab('tab3');
+        return;
+    }
+    fetch(symplrChatUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            chatGptApiToken: chatGptApiToken,
+            newPasswordOne: newPasswordOne,
+            newPasswordTwo: newPasswordTwo,
+            newUserEmail: newUserEmail,
+            isAdmin: isAdmin.checked,
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        settingsModal.style.display = 'none';
+    })
+    .catch(error => {
+        pElement.classList.add('error');
+        pElement.textContent = 'Ooops! Something went wrong while retrieving the response. Please try again.';
+    });
+    settingsModal.style.display = 'none';
+});
+
+settingsCloseButton.addEventListener('click', () => {
+    settingsModal.style.display = 'none';
+});
+
 const changeChatType = () => {
     let changeType = chatTypeSelection.value;
     localStorage.setItem('chat-type', changeType);
@@ -166,42 +250,75 @@ const changeChatType = () => {
 
 chatTypeSelection.addEventListener('change', changeChatType)
 
-function toggleDivsWithTripleBackticks(input) {
-    // Trennt den String an jedem Vorkommen von ```
-    const segments = input.split("```");
-
+function toggleDivsWithTripleBackticks(input, chatType) {
     // Erstellt ein Fragment, um DOM-Operationen zu optimieren
     const fragment = document.createElement('div');
 
-    segments.forEach((segment, index) => {
-        if (index % 2 === 1) {
-            const sections = segment.split("\n");
+    if ('dall-e-3' === chatType) {
+        const imgElement = document.createElement("img");
+        imgElement.src = input;
+        imgElement.alt = "Beschreibung des Bildes";
+        imgElement.classList.add('dall-e-3-image');
+        imgElement.style.width = '300px'
+        imgElement.style.height = '300px'
+        imgElement.style.marginLeft = '20px'
 
-            // Die erste Zeile in ein <div>-Element packen
-            const firstLine = sections.shift(); // Entfernt die erste Zeile aus dem Array
-            const divElement = document.createElement("div");
-            divElement.classList.add('symplr-chat-answer-code-title');
-            divElement.innerHTML = firstLine+`<span onclick="copyResponse(this)" class="material-symbols-rounded">content_copy</span>`;
-            fragment.appendChild(divElement);
+        fragment.appendChild(imgElement);
+    } else {
+        // Trennt den String an jedem Vorkommen von ```
+        const segments = input.split("```");
+        segments.forEach((segment, index) => {
+            if (index % 2 === 1) {
+                const sections = segment.split("\n");
 
-            // Den Rest in ein <p>-Element packen
-            const restText = sections.join("\n"); // Die verbleibenden Zeilen wieder zu einem Text verbinden
-            // Für Segmente zwischen ``` wird ein div erstellt
-            const preElement = document.createElement('pre');
-            preElement.classList.add('symplr-chat-code-text');
-            const codeElement = document.createElement('code');
-            codeElement.classList.add('language-'+firstLine);
-            // Ersetzt Zeilenumbrüche durch <br> und fügt sie als HTML ein
-            codeElement.textContent = restText;
-            preElement.appendChild(codeElement);
-            fragment.appendChild(preElement);
-        } else {
-            const pElement = document.createElement('p');
-            // Für Segmente außerhalb von ``` fügt man den Text mit Zeilenumbrüchen hinzu
-            pElement.textContent = segment;
-            fragment.appendChild(pElement);
-        }
-    });
+                // Die erste Zeile in ein <div>-Element packen
+                const firstLine = sections.shift(); // Entfernt die erste Zeile aus dem Array
+                const divElement = document.createElement("div");
+                divElement.classList.add('symplr-chat-answer-code-title');
+                divElement.innerHTML = firstLine + `<span onclick="copyResponse(this)" class="material-symbols-rounded">content_copy</span>`;
+                fragment.appendChild(divElement);
+
+                // Den Rest in ein <p>-Element packen
+                const restText = sections.join("\n"); // Die verbleibenden Zeilen wieder zu einem Text verbinden
+                // Für Segmente zwischen ``` wird ein div erstellt
+                const preElement = document.createElement('pre');
+                preElement.classList.add('symplr-chat-code-text');
+                const codeElement = document.createElement('code');
+                codeElement.classList.add('language-' + firstLine);
+                // Ersetzt Zeilenumbrüche durch <br> und fügt sie als HTML ein
+                codeElement.textContent = restText;
+                preElement.appendChild(codeElement);
+                fragment.appendChild(preElement);
+            } else {
+                const pElement = document.createElement('p');
+                // Für Segmente außerhalb von ``` fügt man den Text mit Zeilenumbrüchen hinzu
+                pElement.textContent = segment;
+                fragment.appendChild(pElement);
+            }
+        });
+    }
     return fragment;
 }
 
+function openTab(tabName) {
+    const tabs = settingsModal.querySelectorAll(".tabcontent");
+    tabs.forEach(function (tab) {
+        tab.style.display = "none";
+    });
+
+    const selectedTab = document.getElementById(tabName);
+    if (selectedTab) {
+        selectedTab.style.display = "block";
+    }
+}
+
+openTab("tab2");
+
+const tabButtons = settingsModal.querySelectorAll('.tablinks');
+console.log(tabButtons);
+tabButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+        const tabName = this.getAttribute("data-tab");
+        openTab(tabName);
+    });
+});
