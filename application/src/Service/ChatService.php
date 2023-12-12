@@ -7,6 +7,9 @@ namespace App\Service;
 use App\Entity\User;
 use GuzzleHttp\Client;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Tectalic\OpenAi\Authentication;
 use Tectalic\OpenAi\Manager;
 use Tectalic\OpenAi\Models\ChatCompletions\CreateRequest;
@@ -14,10 +17,12 @@ use Tectalic\OpenAi\Models\ChatCompletions\CreateRequest;
 class ChatService
 {
     private Security $security;
+    private HttpClientInterface $httpClient;
 
-    public function __construct(Security $security)
+    public function __construct(Security $security, HttpClientInterface $httpClient)
     {
         $this->security = $security;
+        $this->httpClient = $httpClient;
     }
 
     public function getAnswer(string $prompt, ?string $previousResponse, ?string $sessionId, string $chatType): array
@@ -33,11 +38,6 @@ class ChatService
         }
 
         $resultArray = [];
-
-        $openaiClient = Manager::build(
-            new Client(),
-            new Authentication($chatGPTApiKey)
-        );
 
         $messages = [];
 
@@ -56,17 +56,44 @@ class ChatService
         }
 
         $messages[] = ['role' => 'user', 'content' => $prompt];
+        $content['model'] = $chatType;
+        $content['messages'] = $messages;
 
-        $response = $openaiClient->chatCompletions()->create(
-            new CreateRequest([
-                'model' => $chatType,
-                'messages' => $messages,
-            ])
-        )->toModel();
+        $chatGPTApiUrl = 'https://api.openai.com/v1/chat/completions';
+        if ('dall-e-3' === $chatType) {
+            $chatGPTApiUrl = 'https://api.openai.com/v1/images/generations';
+            unset($content['messages']);
+            $content['prompt'] = $prompt;
+            $content['n'] = 1;
+            $content['size'] = '1024x1024';
+        }
 
-        $resultArray['answer'] = $response->choices[0]->message->content;
-        $resultArray['session_id'] = $response->sessionId ?? null;
-        $resultArray['id'] = $response->id ?? null;
+        try {
+            $response = $this->httpClient->request(
+                Request::METHOD_POST,
+                $chatGPTApiUrl,
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer {$chatGPTApiKey}",
+                    ],
+                    'json' => $content,
+                ]
+            );
+        } catch (TransportExceptionInterface $e) {
+            dd($e->getMessage());
+        }
+
+        $responseArray = $response->toArray();
+
+        $response['response'];
+
+        if ('dall-e-3' === $chatType) {
+            $resultArray['answer'] = $responseArray['data'][0]['url'];
+        } else {
+            $resultArray['answer'] = $responseArray['choices'][0]['message']['content'];
+        }
+        $resultArray['session_id'] = $responseArray['sessionId'] ?? null;
+        $resultArray['id'] = $responseArray['id'] ?? null;
 
         return $resultArray;
     }

@@ -28,7 +28,7 @@ let previousResponse = '';
 let chatType = defaultChatType;
 
 const loadDataFromLocalStorage = () => {
-    const chatType = localStorage.getItem('chat-type') || defaultChatType;
+    let chatType = localStorage.getItem('chat-type') || defaultChatType;
     const themeColor = localStorage.getItem('theme-color');
     document.body.classList.toggle('light-mode', themeColor === 'light_mode');
     themeButton.innerText = document.body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
@@ -57,6 +57,7 @@ const createElement = (html, className) => {
 const getChatResponse = (incomingChatDiv) => {
     const pElement = document.createElement('p');
     const symplrChatUrl = document.getElementById('symplr-chat-answer-url').value;
+    chatType = localStorage.getItem('chat-type');
     fetch(symplrChatUrl, {
         method: 'POST',
         headers: {
@@ -71,8 +72,7 @@ const getChatResponse = (incomingChatDiv) => {
     })
     .then(response => response.json())
     .then(data => {
-        // pElement.textContent = data['answer'];
-        let answer = toggleDivsWithTripleBackticks(data['answer']);
+        let answer = toggleDivsWithTripleBackticks(data['answer'], chatType);
         incomingChatDiv.querySelector('.typing-animation').remove();
         incomingChatDiv.querySelector('.chat-details').appendChild(answer);
         chatContainer.scrollTo(0, chatContainer.scrollHeight);
@@ -250,42 +250,53 @@ const changeChatType = () => {
 
 chatTypeSelection.addEventListener('change', changeChatType)
 
-function toggleDivsWithTripleBackticks(input) {
-    // Trennt den String an jedem Vorkommen von ```
-    const segments = input.split("```");
-
+function toggleDivsWithTripleBackticks(input, chatType) {
     // Erstellt ein Fragment, um DOM-Operationen zu optimieren
     const fragment = document.createElement('div');
 
-    segments.forEach((segment, index) => {
-        if (index % 2 === 1) {
-            const sections = segment.split("\n");
+    if ('dall-e-3' === chatType) {
+        const imgElement = document.createElement("img");
+        imgElement.src = input;
+        imgElement.alt = "Beschreibung des Bildes";
+        imgElement.classList.add('dall-e-3-image');
+        imgElement.style.width = '300px'
+        imgElement.style.height = '300px'
+        imgElement.style.marginLeft = '20px'
 
-            // Die erste Zeile in ein <div>-Element packen
-            const firstLine = sections.shift(); // Entfernt die erste Zeile aus dem Array
-            const divElement = document.createElement("div");
-            divElement.classList.add('symplr-chat-answer-code-title');
-            divElement.innerHTML = firstLine+`<span onclick="copyResponse(this)" class="material-symbols-rounded">content_copy</span>`;
-            fragment.appendChild(divElement);
+        fragment.appendChild(imgElement);
+    } else {
+        // Trennt den String an jedem Vorkommen von ```
+        const segments = input.split("```");
+        segments.forEach((segment, index) => {
+            if (index % 2 === 1) {
+                const sections = segment.split("\n");
 
-            // Den Rest in ein <p>-Element packen
-            const restText = sections.join("\n"); // Die verbleibenden Zeilen wieder zu einem Text verbinden
-            // Für Segmente zwischen ``` wird ein div erstellt
-            const preElement = document.createElement('pre');
-            preElement.classList.add('symplr-chat-code-text');
-            const codeElement = document.createElement('code');
-            codeElement.classList.add('language-'+firstLine);
-            // Ersetzt Zeilenumbrüche durch <br> und fügt sie als HTML ein
-            codeElement.textContent = restText;
-            preElement.appendChild(codeElement);
-            fragment.appendChild(preElement);
-        } else {
-            const pElement = document.createElement('p');
-            // Für Segmente außerhalb von ``` fügt man den Text mit Zeilenumbrüchen hinzu
-            pElement.textContent = segment;
-            fragment.appendChild(pElement);
-        }
-    });
+                // Die erste Zeile in ein <div>-Element packen
+                const firstLine = sections.shift(); // Entfernt die erste Zeile aus dem Array
+                const divElement = document.createElement("div");
+                divElement.classList.add('symplr-chat-answer-code-title');
+                divElement.innerHTML = firstLine + `<span onclick="copyResponse(this)" class="material-symbols-rounded">content_copy</span>`;
+                fragment.appendChild(divElement);
+
+                // Den Rest in ein <p>-Element packen
+                const restText = sections.join("\n"); // Die verbleibenden Zeilen wieder zu einem Text verbinden
+                // Für Segmente zwischen ``` wird ein div erstellt
+                const preElement = document.createElement('pre');
+                preElement.classList.add('symplr-chat-code-text');
+                const codeElement = document.createElement('code');
+                codeElement.classList.add('language-' + firstLine);
+                // Ersetzt Zeilenumbrüche durch <br> und fügt sie als HTML ein
+                codeElement.textContent = restText;
+                preElement.appendChild(codeElement);
+                fragment.appendChild(preElement);
+            } else {
+                const pElement = document.createElement('p');
+                // Für Segmente außerhalb von ``` fügt man den Text mit Zeilenumbrüchen hinzu
+                pElement.textContent = segment;
+                fragment.appendChild(pElement);
+            }
+        });
+    }
     return fragment;
 }
 
