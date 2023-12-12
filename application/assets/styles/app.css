@@ -43,7 +43,9 @@ body {
 .body_wrapper .container #login-container {
     margin-top: 25px;
 }
-
+.body_wrapper .container #chat-gpt-logo {
+    height: 100px;
+}
 .body_wrapper .container #login-container .login-label {
     font-size: 1.5rem;
     margin-bottom: 15px;
