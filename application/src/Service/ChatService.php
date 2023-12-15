@@ -85,8 +85,6 @@ class ChatService
 
         $responseArray = $response->toArray();
 
-        $response['response'];
-
         if ('dall-e-3' === $chatType) {
             $resultArray['answer'] = $responseArray['data'][0]['url'];
         } else {
