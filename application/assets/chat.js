@@ -57,7 +57,7 @@ const createElement = (html, className) => {
 const getChatResponse = (incomingChatDiv) => {
     const pElement = document.createElement('p');
     const symplrChatUrl = document.getElementById('symplr-chat-answer-url').value;
-    chatType = localStorage.getItem('chat-type');
+    chatType = localStorage.getItem('chat-type') || defaultChatType;
     fetch(symplrChatUrl, {
         method: 'POST',
         headers: {
@@ -65,8 +65,8 @@ const getChatResponse = (incomingChatDiv) => {
         },
         body: JSON.stringify({
             prompt: userText,
-            sessionId: sessionId,
             previousResponse: previousResponse,
+            sessionId: sessionId,
             chatType: chatType,
         })
     })
@@ -254,7 +254,7 @@ function toggleDivsWithTripleBackticks(input, chatType) {
     // Erstellt ein Fragment, um DOM-Operationen zu optimieren
     const fragment = document.createElement('div');
 
-    if ('dall-e-3' === chatType) {
+    if ('dall-e-3' === chatType && input.startsWith('images/')) {
         const imgElement = document.createElement("img");
         imgElement.src = input;
         imgElement.alt = "Beschreibung des Bildes";

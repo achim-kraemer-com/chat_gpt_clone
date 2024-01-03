@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Entity\User;
 use GuzzleHttp\Client;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -18,14 +19,16 @@ class ChatService
 {
     private Security $security;
     private HttpClientInterface $httpClient;
+    private ContainerBagInterface $params;
 
-    public function __construct(Security $security, HttpClientInterface $httpClient)
+    public function __construct(Security $security, HttpClientInterface $httpClient, ContainerBagInterface $params)
     {
         $this->security = $security;
         $this->httpClient = $httpClient;
+        $this->params = $params;
     }
 
-    public function getAnswer(string $prompt, ?string $previousResponse, ?string $sessionId, string $chatType): array
+    public function getAnswer(string $prompt, string $chatType, ?string $previousResponse, ?string $sessionId): array
     {
         $user = $this->security->getUser();
         if (!$user instanceof User) {
@@ -83,10 +86,23 @@ class ChatService
             dd($e->getMessage());
         }
 
+        $statuscode = $response->getStatusCode();
+
+        if ($statuscode !== 200) {
+            return new \Exception();
+        }
+
         $responseArray = $response->toArray();
 
-        if ('dall-e-3' === $chatType) {
-            $resultArray['answer'] = $responseArray['data'][0]['url'];
+        if ('dall-e-3' === $chatType && \array_key_exists('data', $responseArray)) {
+            $imageUrl = $responseArray['data'][0]['url'];
+            $urlPiece = \parse_url($imageUrl);
+            $filename = \pathinfo($urlPiece['path'], PATHINFO_BASENAME);
+
+            $imagePath = $this->params->get('image_path');
+            $imageContent = \file_get_contents($imageUrl);
+            \file_put_contents($imagePath.$filename, $imageContent);
+            $resultArray['answer'] = $imagePath.$filename;
         } else {
             $resultArray['answer'] = $responseArray['choices'][0]['message']['content'];
         }

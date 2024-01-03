@@ -6,6 +6,7 @@
 parameters:
     chat_gpt_api_url: '%env(CHAT_GPT_API_URL)%'
     chat_gpt_api_key: '%env(CHAT_GPT_API_KEY)%'
+    image_path: '%env(IMAGE_PATH)%'
 
 services:
     # default configuration for services in *this* file
