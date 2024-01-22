@@ -5,15 +5,11 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\User;
-use GuzzleHttp\Client;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Tectalic\OpenAi\Authentication;
-use Tectalic\OpenAi\Manager;
-use Tectalic\OpenAi\Models\ChatCompletions\CreateRequest;
 
 class ChatService
 {
@@ -28,7 +24,7 @@ class ChatService
         $this->params = $params;
     }
 
-    public function getAnswer(string $prompt, string $chatType, ?string $previousResponse, ?string $sessionId): array
+    public function getAnswer(string $prompt, string $chatType, ?string $previousResponse, ?string $sessionId): array|\Exception
     {
         $user = $this->security->getUser();
         if (!$user instanceof User) {
@@ -83,16 +79,14 @@ class ChatService
                 ]
             );
         } catch (TransportExceptionInterface $e) {
-            dd($e->getMessage());
+            return $resultArray;
         }
 
-        $statuscode = $response->getStatusCode();
-
-        if ($statuscode !== 200) {
-            return new \Exception();
+        try {
+            $responseArray = $response->toArray();
+        } catch (\Exception $e) {
+            return new \Exception($e->getMessage(), $e->getCode());
         }
-
-        $responseArray = $response->toArray();
 
         if ('dall-e-3' === $chatType && \array_key_exists('data', $responseArray)) {
             $imageUrl = $responseArray['data'][0]['url'];

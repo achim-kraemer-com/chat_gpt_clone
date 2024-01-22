@@ -44,9 +44,23 @@ class ChatController extends AbstractController
     #[Route('/get-chat-answer', name: 'app_get_chat_answer', methods: ['POST'])]
     public function getAnswer(Request $request, ChatService $chatService): JsonResponse
     {
-        $prompt = \json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        $answer = $chatService->getAnswer($prompt['prompt'], $prompt['chatType'], $prompt['previousResponse'], $prompt['sessionId']);
-        $answer['question'] = $prompt['prompt'];
+        try {
+            $prompt = \json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+            $answer = $chatService->getAnswer($prompt['prompt'], $prompt['chatType'], $prompt['previousResponse'], $prompt['sessionId']);
+            dd($answer);
+            if ($answer instanceof \Exception) {
+                return new JsonResponse([
+                    'error' => true,
+                    'message' => 'Ein Fehler ist aufgetreten'
+                ], 500);
+            }
+            $answer['question'] = $prompt['prompt'];
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => true,
+                'message' => 'Ein Fehler ist aufgetreten'
+            ], 500);
+        }
 
         return new JsonResponse($answer);
     }

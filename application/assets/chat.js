@@ -55,7 +55,6 @@ const createElement = (html, className) => {
 }
 
 const getChatResponse = (incomingChatDiv) => {
-    const pElement = document.createElement('p');
     const symplrChatUrl = document.getElementById('symplr-chat-answer-url').value;
     chatType = localStorage.getItem('chat-type') || defaultChatType;
     fetch(symplrChatUrl, {
@@ -70,7 +69,12 @@ const getChatResponse = (incomingChatDiv) => {
             chatType: chatType,
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Fehler beim Laden der Daten');
+        }
+        return response.json();
+    })
     .then(data => {
         let answer = toggleDivsWithTripleBackticks(data['answer'], chatType);
         incomingChatDiv.querySelector('.typing-animation').remove();
@@ -82,8 +86,13 @@ const getChatResponse = (incomingChatDiv) => {
         localStorage.setItem('session-id', data['id']);
     })
     .catch(error => {
+        const fragment = document.createElement('div');
+        const pElement = document.createElement('p');
         pElement.classList.add('error');
         pElement.textContent = 'Ooops! Something went wrong while retrieving the response. Please try again.';
+        fragment.appendChild(pElement);
+        incomingChatDiv.querySelector('.typing-animation').remove();
+        incomingChatDiv.querySelector('.chat-details').appendChild(fragment);
     });
 }
 
