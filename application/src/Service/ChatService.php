@@ -37,7 +37,6 @@ class ChatService
         }
 
         $resultArray = [];
-
         $messages = [];
 
         try {

@@ -47,7 +47,6 @@ class ChatController extends AbstractController
         try {
             $prompt = \json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
             $answer = $chatService->getAnswer($prompt['prompt'], $prompt['chatType'], $prompt['previousResponse'], $prompt['sessionId']);
-            dd($answer);
             if ($answer instanceof \Exception) {
                 return new JsonResponse([
                     'error' => true,
