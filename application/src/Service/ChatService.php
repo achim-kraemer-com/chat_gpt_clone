@@ -72,6 +72,7 @@ class ChatService
                 $chatGPTApiUrl,
                 [
                     'headers' => [
+                        'Content-Type' => 'application/json',
                         'Authorization' => "Bearer {$chatGPTApiKey}",
                     ],
                     'json' => $content,
