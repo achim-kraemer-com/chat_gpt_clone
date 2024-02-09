@@ -71,25 +71,38 @@ const getChatResponse = (incomingChatDiv) => {
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Fehler beim Laden der Daten');
+            return response.text().then(errorMessage => {
+                throw new Error(errorMessage);
+            });
         }
         return response.json();
     })
     .then(data => {
-        let answer = toggleDivsWithTripleBackticks(data['answer'], chatType);
-        incomingChatDiv.querySelector('.typing-animation').remove();
-        incomingChatDiv.querySelector('.chat-details').appendChild(answer);
-        chatContainer.scrollTo(0, chatContainer.scrollHeight);
-        localStorage.setItem('all-chats', chatContainer.innerHTML);
-        previousResponse = '[{"role": "user", "content": "' + userText + '"},{"role": "assistant", "content": ' + JSON.stringify(data['answer']) + '}]';
-        localStorage.setItem('previous-response', previousResponse);
-        localStorage.setItem('session-id', data['id']);
+        if (data['error_message'] && data['error_code']) {
+            // Hier können Sie die Fehlermeldung und den Fehlercode anzeigen
+            const fragment = document.createElement('div');
+            const pElement = document.createElement('p');
+            pElement.classList.add('error');
+            pElement.textContent = 'Ooops! Something went wrong while retrieving the response. Please try again. - code: '+data['error_code']+' - message: '+data['error_message'];
+            fragment.appendChild(pElement);
+            incomingChatDiv.querySelector('.typing-animation').remove();
+            incomingChatDiv.querySelector('.chat-details').appendChild(fragment);
+        } else {
+            let answer = toggleDivsWithTripleBackticks(data['answer'], chatType);
+            incomingChatDiv.querySelector('.typing-animation').remove();
+            incomingChatDiv.querySelector('.chat-details').appendChild(answer);
+            chatContainer.scrollTo(0, chatContainer.scrollHeight);
+            localStorage.setItem('all-chats', chatContainer.innerHTML);
+            previousResponse = '[{"role": "user", "content": "' + userText + '"},{"role": "assistant", "content": ' + JSON.stringify(data['answer']) + '}]';
+            localStorage.setItem('previous-response', previousResponse);
+            localStorage.setItem('session-id', data['id']);
+        }
     })
     .catch(error => {
         const fragment = document.createElement('div');
         const pElement = document.createElement('p');
         pElement.classList.add('error');
-        pElement.textContent = 'Ooops! Something went wrong while retrieving the response. Please try again.';
+        pElement.textContent = 'Ooops! Something went wrong while retrieving the response. Please try again. - '+error;
         fragment.appendChild(pElement);
         incomingChatDiv.querySelector('.typing-animation').remove();
         incomingChatDiv.querySelector('.chat-details').appendChild(fragment);

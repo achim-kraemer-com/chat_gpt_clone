@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\ChatHistory;
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,12 +18,18 @@ class ChatService
     private Security $security;
     private HttpClientInterface $httpClient;
     private ContainerBagInterface $params;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(Security $security, HttpClientInterface $httpClient, ContainerBagInterface $params)
-    {
+    public function __construct(
+        Security $security,
+        HttpClientInterface $httpClient,
+        ContainerBagInterface $params,
+        EntityManagerInterface $entityManager
+    ) {
         $this->security = $security;
         $this->httpClient = $httpClient;
         $this->params = $params;
+        $this->entityManager = $entityManager;
     }
 
     public function getAnswer(string $prompt, string $chatType, ?string $previousResponse, ?string $sessionId): array|\Exception
@@ -53,6 +61,12 @@ class ChatService
             }
         }
 
+        $chatHistory = new ChatHistory();
+        $chatHistory->setUser($user);
+        $chatHistory->setRequest($prompt);
+        $chatHistory->setModel($chatType);
+        $chatHistory->setCreatedAt(new \DateTimeImmutable());
+
         $messages[] = ['role' => 'user', 'content' => $prompt];
         $content['model'] = $chatType;
         $content['messages'] = $messages;
@@ -79,13 +93,24 @@ class ChatService
                 ]
             );
         } catch (TransportExceptionInterface $e) {
+            $chatHistory->setResponse($e->getMessage());
+            $this->entityManager->persist($chatHistory);
+            $this->entityManager->flush();
+
             return $resultArray;
         }
 
         try {
             $responseArray = $response->toArray();
         } catch (\Exception $e) {
-            return new \Exception($e->getMessage(), $e->getCode());
+            $chatHistory->setResponse($e->getMessage());
+            $this->entityManager->persist($chatHistory);
+            $this->entityManager->flush();
+
+            return [
+                'error_message' => $e->getMessage(),
+                'error_code' => $e->getCode()
+            ];
         }
 
         if ('dall-e-3' === $chatType && \array_key_exists('data', $responseArray)) {
@@ -97,11 +122,16 @@ class ChatService
             $imageContent = \file_get_contents($imageUrl);
             \file_put_contents($imagePath.$filename, $imageContent);
             $resultArray['answer'] = $imagePath.$filename;
+            $chatHistory->setResponse($imagePath.$filename);
         } else {
             $resultArray['answer'] = $responseArray['choices'][0]['message']['content'];
+            $chatHistory->setResponse($resultArray['answer']);
         }
         $resultArray['session_id'] = $responseArray['sessionId'] ?? null;
         $resultArray['id'] = $responseArray['id'] ?? null;
+
+        $this->entityManager->persist($chatHistory);
+        $this->entityManager->flush();
 
         return $resultArray;
     }

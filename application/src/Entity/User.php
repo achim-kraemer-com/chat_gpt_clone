@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -36,6 +38,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Unit $unit = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ChatHistory::class, orphanRemoval: true)]
+    private Collection $chatHistories;
+
+    public function __construct()
+    {
+        $this->chatHistories = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -127,6 +137,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUnit(?Unit $unit): static
     {
         $this->unit = $unit;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ChatHistory>
+     */
+    public function getChatHistories(): Collection
+    {
+        return $this->chatHistories;
+    }
+
+    public function addChatHistory(ChatHistory $chatHistory): static
+    {
+        if (!$this->chatHistories->contains($chatHistory)) {
+            $this->chatHistories->add($chatHistory);
+            $chatHistory->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChatHistory(ChatHistory $chatHistory): static
+    {
+        if ($this->chatHistories->removeElement($chatHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($chatHistory->getUser() === $this) {
+                $chatHistory->setUser(null);
+            }
+        }
 
         return $this;
     }
