@@ -87,6 +87,7 @@ class ChatController extends AbstractController
             $newUser = new User();
             $newUser->setEmail($settings['newUserEmail']);
             $newUser->setUnit($user->getUnit());
+            $newUser->setIsVerified(true);
             $password = $this->generateStrongPassword(12);
             $newUser->setPassword(
                 $userPasswordHasher->hashPassword(
