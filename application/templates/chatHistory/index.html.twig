@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+    
+    {% block stylesheets %}
+        {{ parent() }}
+        {{ encore_entry_link_tags('chatHistory') }}
+    {% endblock %}
+    {% block body %}
+            <table class="fullTable">
+                    <tr class="tr-table">
+                            <th class="headline"> Id </th>
+                            <th class="headline"> user email </th>
+                            <th class="headline"> request</th>
+                            <th class="headline"> response</th>
+                            <th class="headline"> create at</th>
+                            <th class="headline"> model</th>
+                    </tr>
+                    <div id="table_placing" class="tableStyle">
+                    {% for chatHistory in histories %}
+                        <tr>
+                                <td class="bodyline-id">{{ chatHistory.id }}</td>
+                                <td class="bodyline">{{ chatHistory.user.email }}</td>
+                                <td class="bodyline">{{ chatHistory.request }}</td>
+                                <td class="bodyline">{{ chatHistory.response }}</td>
+                                <td class="bodyline">{{ chatHistory.createdAt|date('d.m.Y H:i:s') }}</td> 
+                                <td class="bodyline">{{ chatHistory.model }}</td>
+                                
+                        </tr>
+                    {% endfor %}
+                    </div>
+            </table>
+        </div>    
+    {% endblock %}
