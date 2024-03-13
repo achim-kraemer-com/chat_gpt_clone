@@ -20,4 +20,14 @@ class ChatHistoryRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, ChatHistory::class);
     }
+
+    public function getHistoryFromUnit(int $unitId)
+    {
+        return $this->createQueryBuilder('ch') 
+            ->join('ch.user','u')
+            ->where('u.unit = :unitId')
+            ->setParameter('unitId', $unitId)
+            ->getQuery()
+            ->getResult();
+    }
 }
