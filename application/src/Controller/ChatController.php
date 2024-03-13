@@ -21,11 +21,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_USER')]
 class ChatController extends AbstractController
 {
-    private MailerInterface $mailer;
-
-    public function __construct(MailerInterface $mailer)
+    public function __construct(private readonly MailerInterface $mailer)
     {
-        $this->mailer = $mailer;
     }
 
     #[Route('/chat', name: 'app_index', methods: ['GET', 'POST'])]
@@ -90,6 +87,7 @@ class ChatController extends AbstractController
             $newUser = new User();
             $newUser->setEmail($settings['newUserEmail']);
             $newUser->setUnit($user->getUnit());
+            $newUser->setIsVerified(true);
             $password = $this->generateStrongPassword(12);
             $newUser->setPassword(
                 $userPasswordHasher->hashPassword(
@@ -125,7 +123,7 @@ class ChatController extends AbstractController
 
     private function sendPasswordEmail(string $emailAddress, string $password): void {
         $email = (new TemplatedEmail())
-            ->from('your@email.com')
+            ->from('chat@notifications.mso-digital.de')
             ->to($emailAddress)
             ->subject('Ihr neues Passwort')
             ->htmlTemplate('emails/password.html.twig')
