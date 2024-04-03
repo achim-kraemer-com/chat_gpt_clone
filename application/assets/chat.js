@@ -36,8 +36,7 @@ const loadDataFromLocalStorage = () => {
     themeButton.innerText = document.body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
     const imageUrl = document.getElementById('mso-image-url').value;
     const defaultText = `<div class="default-text">
-                                    <img height="100px" src="${imageUrl}" alt="mso digital ChatGPT Clone">
-                                    <h1>ChatGPT Clone</h1>
+                                    <img src="${imageUrl}" class="logo">
                                     <p>Start a conversation and explore the power of AI.<br>Your chat history will  be displayed here</p>
                                 </div>`;
     chatContainer.innerHTML = localStorage.getItem('all-chats') || defaultText;
