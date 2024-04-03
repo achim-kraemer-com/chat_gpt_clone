@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('faq') }}
+{% endblock %}
+
+{% block title %}New Faq{% endblock %}
+
+{% block body %}
+    <h1 class="title">New Question</h1>
+
+    <div class="stay-together">
+
+        {{ include('faq/_form.html.twig') }}
+        <a href="{{ path('app_faq_index') }}" class="right-btn">back to list</a>
+
+    </div>
+{% endblock %}

@@ -23,6 +23,7 @@ Encore
     .addEntry('app', './assets/app.js')
     .addEntry('chat', './assets/chat.js')
     .addEntry('chatHistory', './assets/styles/chatHistory.css')
+    .addEntry('faq', './assets/styles/faq.css')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
