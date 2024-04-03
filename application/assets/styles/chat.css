@@ -359,3 +359,7 @@ input[type="text"], input[type="password"] {
     font-family: "Poppins", sans-serif;
     color: var(--text-color);
 }
+
+.logo {
+    width: 50em;
+}
