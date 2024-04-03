@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+    {% block stylesheets %}
+        {{ parent() }}
+        {{ encore_entry_link_tags('faq') }}
+    {% endblock %}
+{% block title %}FAQ{% endblock %}
+
+{% block body %}
+    <h1 class="title">FAQ</h1>
+
+    <table class="fullTable">
+        <thead>
+            <tr>
+                <th class="headline">Question</th>
+                <th class="headline">Answer</th>
+                <th class="headline-button">actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for faq in faqs %}
+            <tr>
+                <td class="bodyline">{{ faq.question }}</td>
+                <td class="bodyline">{{ faq.answer }}</td>
+                <td class="bodyline-button">
+                    <a href="{{ path('app_faq_edit', {'id': faq.id}) }}" class="create-btn">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr class="edit-btn">
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_faq_new') }}" class="right-btn">Create new</a>
+    <a href="{{ path('app_index') }}" class="left-btn">Back to Chat</a>
+{% endblock %}

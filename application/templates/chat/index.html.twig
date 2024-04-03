@@ -12,6 +12,7 @@
 <input type="hidden" id="symplr-save-settings-url" value="{{ path('app_save_settings') }}">
 <input type="hidden" id="symplr-chat-answer-url" value="{{ path('app_get_chat_answer') }}">
 <input type="hidden" id="symplr-chat-history-url" value="{{ path('admin_chat_history') }}">
+<input type="hidden" id="symplr-faq-url" value="{{ path('app_faq_index') }}">
 <input type="hidden" id="mso-image-url" value="/build/images/2023-12_logo_chat-gpt-clone_mso-digital.png">
 <div class="chat-container"></div>
 <div class="typing-container">
@@ -32,6 +33,7 @@
             <span id="theme-btn" class="material-symbols-rounded">light_mode</span>
             <span id="delete-btn" class="material-symbols-rounded">delete</span>
             <span id="settings-btn" class="material-symbols-rounded">settings</span>
+            <span id="faq-btn">FAQ</span>
             {% if is_granted('ROLE_ADMIN') %}
                 <span id="history-btn" class="material-symbols-rounded">history</span>
             {% endif %}

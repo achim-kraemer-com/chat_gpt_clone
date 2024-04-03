@@ -15,6 +15,7 @@ const themeButton = document.querySelector('#theme-btn');
 const deleteButton = document.querySelector('#delete-btn');
 const settingsButton = document.querySelector('#settings-btn');
 const historiesButton = document.querySelector('#history-btn');
+const faqButton = document.querySelector('#faq-btn');
 const chatTypeSelection = document.querySelector('#chat-types');
 const settingsModal = document.getElementById("settingsModal");
 const settingsSaveButton = document.getElementById("settings-save-btn");
@@ -178,6 +179,17 @@ historiesButton.addEventListener('click', ()=> {
     let currentURL = document.getElementById("symplr-chat-history-url").value;
     window.open(currentURL, '_blank');
 });
+
+faqButton.addEventListener('click', function(){
+        var currentURL = window.location.href;
+        var parts = currentURL.split('/');
+        var lastPart = parts[parts.length - 1];
+        var newLastPart = 'faq';
+        parts[parts.length - 1] = newLastPart;
+        var newURL = parts.join('/');
+        window.location.href = newURL;
+    }
+);
 
 chatInput.addEventListener('input', () => {
     chatInput.style.height = `${initialHeight}px`;

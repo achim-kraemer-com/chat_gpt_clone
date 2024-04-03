@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Faq{% endblock %}
+    {% block stylesheets %}
+        {{ parent() }}
+        {{ encore_entry_link_tags('faq') }}
+    {% endblock %}
+{% block body %}
+    <h1>Faq</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ faq.id }}</td>
+            </tr>
+            <tr>
+                <th class="title">Question</th>
+                <td>{{ faq.question }}</td>
+            </tr>
+            <tr>
+                <th>Answer</th>
+                <td>{{ faq.answer }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ faq.createdAt ? faq.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>UpdatedAt</th>
+                <td>{{ faq.updatedAt ? faq.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_faq_index') }}">back to list</a>
+
+    <a href="{{ path('app_faq_edit', {'id': faq.id}) }}">edit</a>
+
+    {{ include('faq/_delete_form.html.twig') }}
+{% endblock %}
