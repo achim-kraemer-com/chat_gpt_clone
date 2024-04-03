@@ -16,11 +16,6 @@ class FaqType extends AbstractType
             ->add('question', TextareaType::class,[
                 'attr'=>['class'=>'textfield'],
             ])
-            // ->add('answer', TextareaType::class,[
-            //     'attr'=>[
-            //         'class'=>'textfield'
-            //         ],
-            // ])
             ->add('answer', TextareaType::class, array('required' => false, 'attr' =>array('class' =>'textfield')))
         ;
     }
