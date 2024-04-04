@@ -33,10 +33,15 @@ const loadDataFromLocalStorage = () => {
     let chatType = localStorage.getItem('chat-type') || defaultChatType;
     const themeColor = localStorage.getItem('theme-color');
     document.body.classList.toggle('light-mode', themeColor === 'light_mode');
+    const imageUrlLight = document.getElementById('mso-image-url-light').value;
+    const imageUrlDark = document.getElementById('mso-image-url-dark').value;
     themeButton.innerText = document.body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
-    const imageUrl = document.getElementById('mso-image-url').value;
+    let imageUrl = imageUrlLight;
+    if (themeButton.innerText === 'light_mode') {
+        imageUrl = imageUrlDark;
+    }
     const defaultText = `<div class="default-text">
-                                    <img src="${imageUrl}" class="logo">
+                                    <img src="${imageUrl}" class="logo" id="prompt-privacy-portal-image">
                                     <p>Start a conversation and explore the power of AI.<br>Your chat history will  be displayed here</p>
                                 </div>`;
     chatContainer.innerHTML = localStorage.getItem('all-chats') || defaultText;
@@ -158,6 +163,15 @@ const handleOutgoingChat = () => {
 themeButton.addEventListener('click', () => {
     document.body.classList.toggle('light-mode');
     localStorage.setItem('theme-color', themeButton.innerText);
+    const imageUrlDark = document.getElementById('mso-image-url-dark').value;
+    const imageUrlLight = document.getElementById('mso-image-url-light').value;
+    const imgChange = document.getElementById("prompt-privacy-portal-image");
+    if(themeButton.innerText === "light_mode"){
+        imgChange.src = imageUrlLight;
+    } else {
+        imgChange.src = imageUrlDark;
+    }
+    
     themeButton.innerText = document.body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
 });
 
