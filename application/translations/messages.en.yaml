@@ -1,0 +1,35 @@
+##############################################Startseite#####################################################
+app.chat.light_mode: light_mode
+app.chat.delete: delete
+app.chat.settings: settings
+app.chat.FAQ: FAQ
+app.chat.history: history
+
+app.chat.conversation_start: Start a conversation and explore the power of AI.
+app.chat.history_displaying: Your chat history will be displayed here
+app.chat.prompt: Enter a prompt here
+#############################FAQ########################################################################
+app.faq.faq: FAQ
+app.faq.question: Question
+app.faq.answer: Answer
+app.faq.action: Action
+app.faq.back_to_chat: Back to Chat
+app.faq.create_new: Create new
+app.faq.save: Save
+app.faq.back_to_list: Back to list
+app.faq.new_question: New Question
+app.faq.edit-faq: edit FAQ
+app.faq.edit: edit
+app.faq.update: update
+#########################################Chat Historie#################################################
+app.chat_history.id: Id
+app.chat_history.user: user
+app.chat_history.email: email
+app.chat_history.request: request
+app.chat_history.response: response
+app.chat_history.created_at: created at
+app.chat_history.model: model
+app.chat_history.delete: delete
+#########################################Login########################################################
+
+app.login.start: Login and start the command prompt

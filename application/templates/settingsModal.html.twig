@@ -12,12 +12,13 @@
                     <span class="tablinks" data-tab="tab3">Benutzer hinzufügen</span>
                 {% endif %}
             </div>
-
+                {% if is_granted('ROLE_ADMIN') %}
             <div id="tab1" class="tabcontent">
                 <h3>ChatGPT API Token</h3>
                 <input type="text" id="chat-gpt-api-token" placeholder="sk-xxxxx-xxxxx" value="{{ chatGptApiToken }}">
                 <div class="error-message" id="chatgpt-api-token-error-message"></div>
             </div>
+                {% endif %}
 
             <div id="tab2" class="tabcontent">
                 <h3>Passwort ändern</h3>
@@ -25,7 +26,7 @@
                 <input type="password" id="new-password-two" placeholder="Neues Passwort wiederholen">
                 <div class="error-message" id="password-error-message"></div>
             </div>
-
+                {% if is_granted('ROLE_ADMIN') %}
             <div id="tab3" class="tabcontent">
                 <h3>Benutzer hinzufügen</h3>
                 <input type="text" id="new-user-email" placeholder="E-Mail Adresse">
@@ -33,6 +34,7 @@
                 <label>Ist Admin Benutzer</label>
                 <div class="error-message" id="email-error-message"></div>
             </div>
+                {% endif %}
         </div>
         <div class="modal-footer">
             <span id="settings-save-btn" class="material-symbols-rounded">save</span>

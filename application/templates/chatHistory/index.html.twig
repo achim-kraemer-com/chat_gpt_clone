@@ -7,12 +7,12 @@
     {% block body %}
             <table class="fullTable">
                     <tr class="tr-table">
-                            <th class="headline"> Id </th>
-                            <th class="headline"> user email </th>
-                            <th class="headline"> request</th>
-                            <th class="headline"> response</th>
-                            <th class="headline"> create at</th>
-                            <th class="headline"> model</th>
+                            <th class="headline"> {{'app.chat_history.id'|trans}} </th>
+                            <th class="headline"> {{'app.chat_history.user_email'|trans}} </th>
+                            <th class="headline"> {{'app.chat_history.request'|trans}}</th>
+                            <th class="headline"> {{'app.chat_history.response'|trans}}</th>
+                            <th class="headline"> {{'app.chat_history.created_at'|trans}}</th>
+                            <th class="headline"> {{'app.chat_history.model'|trans}}</th>
                     </tr>
                     <div id="table_placing" class="tableStyle">
                     {% for chatHistory in histories %}

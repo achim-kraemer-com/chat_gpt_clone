@@ -7,14 +7,14 @@
 {% block title %}FAQ{% endblock %}
 
 {% block body %}
-    <h1 class="title">FAQ</h1>
+    <h1 class="title">{{'app.faq.faq'|trans}}</h1>
 
     <table class="fullTable">
         <thead>
             <tr>
-                <th class="headline">Question</th>
-                <th class="headline">Answer</th>
-                <th class="headline-button">actions</th>
+                <th class="headline">{{'app.faq.question'|trans}}</th>
+                <th class="headline">{{'app.faq.answer'|trans}}</th>
+                <th class="headline-button">{{'app.faq.action'|trans}}</th>
             </tr>
         </thead>
         <tbody>
@@ -23,7 +23,7 @@
                 <td class="bodyline">{{ faq.question }}</td>
                 <td class="bodyline">{{ faq.answer }}</td>
                 <td class="bodyline-button">
-                    <a href="{{ path('app_faq_edit', {'id': faq.id}) }}" class="create-btn">edit</a>
+                    <a href="{{ path('app_faq_edit', {'id': faq.id}) }}" class="create-btn">{{'app.faq.edit'|trans}}</a>
                 </td>
             </tr>
         {% else %}
@@ -32,6 +32,6 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_faq_new') }}" class="right-btn">Create new</a>
-    <a href="{{ path('app_index') }}" class="left-btn">Back to Chat</a>
+    <a href="{{ path('app_faq_new') }}" class="right-btn">{{'app.faq.create_new'|trans}}</a>
+    <a href="{{ path('app_index') }}" class="left-btn">{{'app.faq.back_to_chat'|trans}}</a>
 {% endblock %}

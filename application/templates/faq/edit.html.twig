@@ -8,10 +8,10 @@
 {% block title %}Edit Faq{% endblock %}
 
 {% block body %}
-    <h1 class="title">Edit FAQ</h1>
-       {{ include('faq/_form.html.twig', {'button_label': 'Update'}) }}
+    <h1 class="title">{{'Edit FAQ'|trans}}</h1>
+       {{ include('faq/_form.html.twig', {'button_label': 'app.faq.update'|trans}) }}
 
-        <a href="{{ path('app_faq_index') }}" class="center-btn">back to list</a>
+        <a href="{{ path('app_faq_index') }}" class="center-btn">{{'app.faq.back_to_list'|trans}}</a>
 
         {{ include('faq/_delete_form.html.twig') }}
 {% endblock %}

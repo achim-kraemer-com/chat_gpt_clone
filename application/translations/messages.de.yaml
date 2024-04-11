@@ -1,0 +1,36 @@
+##############################################Startseite#####################################################
+app.chat.light_mode: Licht Modus
+app.chat.delete: Löschen
+app.chat.settings: Einstellungen
+app.chat.FAQ: FAQ
+app.chat.history: Geschichte
+
+app.chat.conversation_start: Starte eine Unterhaltung und erkunde die Kraft der KI.
+app.chat.history_displaying: Deine Chat-Historie wird hier angezeigt
+app.chat.prompt: Gib hier eine Eingabe ein. 
+###############################################FAQ#######################################################
+app.faq.faq: FAQ
+app.faq.question: Frage
+app.faq.answer: Antwort
+app.faq.action: Aktion
+app.faq.back_to_chat: Zurück zum Chat
+app.faq.create_new: Neue Frage erstellen
+app.faq.save: Speichern
+app.faq.back_to_list: zurück zur Liste
+app.faq.new_question: Neue Frage
+app.faq.edit-faq: FAQ bearbeiten
+app.faq.edit: Bearbeiten
+app.faq.update: Update
+
+#########################################Chat Historie#################################################
+app.chat_history.id: ID
+app.chat_history.user_email: E-Mail
+app.chat_history.request: Anfrage
+app.chat_history.response: Antwort
+app.chat_history.created_at: Erstellt am
+app.chat_history.model: Modell
+app.chat_history.delete: Löschen
+
+#########################################Login########################################################
+
+app.login.start: Anmelden und die Eingabe starten
