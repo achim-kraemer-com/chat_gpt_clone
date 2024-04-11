@@ -297,7 +297,6 @@ settingsSaveButton.addEventListener('click', () => {
 
 settingsCloseButton.addEventListener('click', () => {
     settingsModal.style.display = 'none';
-    console.log("Schließen-Symbol wurde geklickt!");
 });
 
 const changeChatType = () => {
@@ -372,7 +371,6 @@ function openTab(tabName) {
 openTab("tab2");
 
 const tabButtons = settingsModal.querySelectorAll('.tablinks');
-console.log(tabButtons);
 tabButtons.forEach(function (button) {
     button.addEventListener("click", function () {
         const tabName = this.getAttribute("data-tab");
