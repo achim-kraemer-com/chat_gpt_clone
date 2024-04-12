@@ -6,36 +6,36 @@
         {{ encore_entry_link_tags('faq') }}
     {% endblock %}
 {% block body %}
-    <h1>Faq</h1>
+    <h1>{{'app.faq.faq'|trans}}</h1>
 
     <table class="table">
         <tbody>
             <tr>
-                <th>Id</th>
+                <th>{{'app.faq.id'|trans}}</th>
                 <td>{{ faq.id }}</td>
             </tr>
             <tr>
-                <th class="title">Question</th>
+                <th class="title">{{'app.faq.question'|trans}}</th>
                 <td>{{ faq.question }}</td>
             </tr>
             <tr>
-                <th>Answer</th>
+                <th>{{'app.faq.answer'|trans}}</th>
                 <td>{{ faq.answer }}</td>
             </tr>
             <tr>
-                <th>CreatedAt</th>
+                <th>{{'app.faq.createdAt'|trans}}</th>
                 <td>{{ faq.createdAt ? faq.createdAt|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
             <tr>
-                <th>UpdatedAt</th>
+                <th>{{'app.faq.updatedAt'|trans}}</th>
                 <td>{{ faq.updatedAt ? faq.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
         </tbody>
     </table>
 
-    <a href="{{ path('app_faq_index') }}">back to list</a>
+    <a href="{{ path('app_faq_index') }}">{{'app.faq.back_to_list'|trans}}</a>
 
-    <a href="{{ path('app_faq_edit', {'id': faq.id}) }}">edit</a>
+    <a href="{{ path('app_faq_edit', {'id': faq.id}) }}">{{'app.faq.edit'|trans}}</a>
 
     {{ include('faq/_delete_form.html.twig') }}
 {% endblock %}

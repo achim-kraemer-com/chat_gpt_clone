@@ -35,6 +35,8 @@ const loadDataFromLocalStorage = () => {
     document.body.classList.toggle('light-mode', themeColor === 'light_mode');
     const imageUrlLight = document.getElementById('mso-image-url-light').value;
     const imageUrlDark = document.getElementById('mso-image-url-dark').value;
+    const conversationStart = document.getElementById('app_chat_conversation_start').value;
+    const historyDisplay = document.getElementById('app_chat_history_displaying').value;
     themeButton.innerText = document.body.classList.contains('light-mode') ? 'dark_mode' : 'light_mode';
     let imageUrl = imageUrlLight;
     if (themeButton.innerText === 'light_mode') {
@@ -42,7 +44,7 @@ const loadDataFromLocalStorage = () => {
     }
     const defaultText = `<div class="default-text">
                                     <img src="${imageUrl}" class="logo" id="prompt-privacy-portal-image">
-                                    <p>Start a conversation and explore the power of AI.<br>Your chat history will  be displayed here</p>
+                                    <p>${conversationStart}<br>${historyDisplay}</p>
                                 </div>`;
     chatContainer.innerHTML = localStorage.getItem('all-chats') || defaultText;
     chatContainer.scrollTo(0, chatContainer.scrollHeight);
@@ -188,11 +190,12 @@ settingsButton.addEventListener('click', () => {
     settingsModal.style.display = "block";
 });
 
+if(historiesButton){
 historiesButton.addEventListener('click', ()=> {
     let currentURL = document.getElementById("symplr-chat-history-url").value;
     window.open(currentURL, '_blank');
 });
-
+}
 faqButton.addEventListener('click', function(){
         var currentURL = window.location.href;
         var parts = currentURL.split('/');
@@ -368,7 +371,6 @@ function openTab(tabName) {
 openTab("tab2");
 
 const tabButtons = settingsModal.querySelectorAll('.tablinks');
-console.log(tabButtons);
 tabButtons.forEach(function (button) {
     button.addEventListener("click", function () {
         const tabName = this.getAttribute("data-tab");

@@ -8,12 +8,12 @@
 {% block title %}New Faq{% endblock %}
 
 {% block body %}
-    <h1 class="title">New Question</h1>
+    <h1 class="title">{{'app.faq.new_question'|trans}}</h1>
 
     <div class="stay-together">
 
         {{ include('faq/_form.html.twig') }}
-        <a href="{{ path('app_faq_index') }}" class="right-btn">back to list</a>
+        <a href="{{ path('app_faq_index') }}" class="right-btn">{{'app.faq.back_to_list'|trans}}</a>
 
     </div>
 {% endblock %}
