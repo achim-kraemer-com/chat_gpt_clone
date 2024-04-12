@@ -8,6 +8,7 @@ app.chat.history: Geschichte
 app.chat.conversation_start: Starte eine Unterhaltung und erkunde die Kraft der KI.
 app.chat.history_displaying: Deine Chat-Historie wird hier angezeigt
 app.chat.prompt: Gib hier eine Eingabe ein. 
+
 ###############################################FAQ#######################################################
 app.faq.faq: FAQ
 app.faq.question: Frage
@@ -32,5 +33,4 @@ app.chat_history.model: Modell
 app.chat_history.delete: Löschen
 
 #########################################Login########################################################
-
 app.login.start: Anmelden und die Eingabe starten
