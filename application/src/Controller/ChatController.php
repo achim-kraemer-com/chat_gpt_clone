@@ -30,11 +30,14 @@ class ChatController extends AbstractController
     {
         $form = $this->createForm(ChatType::class);
         $user = $this->getUser();
-        $chatGptApiToken = $user->getUnit()->getChatGptApiToken();
+        $unit = $user->getUnit();
+        $chatGptApiToken = $unit->getChatGptApiToken();
+        $chatCount = $unit->getChatCount();
 
         return $this->render('chat/index.html.twig', [
             'form' => $form->createView(),
             'chatGptApiToken' => $chatGptApiToken,
+            'chatCount' => $chatCount,
         ]);
     }
 
@@ -68,6 +71,10 @@ class ChatController extends AbstractController
         $unit = $user->getUnit();
         $chatGptApiToken = $unit->getChatGptApiToken();
         $settings = \json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $chatCount = (int) $settings['chatCount'];
+        $unit->setChatCount($chatCount);
+        $entityManager->persist($unit);
+        $entityManager->flush();
         if ($chatGptApiToken !== $settings['chatGptApiToken']) {
             $unit->setChatGptApiToken($settings['chatGptApiToken']);
             $entityManager->persist($user);

@@ -26,7 +26,8 @@ const defaultChatType = 'gpt-4-1106-preview';
 let userText = null;
 const initialHeight = chatInput.scrollHeight;
 let sessionId = null;
-let previousResponse = '';
+let previousResponse = [];
+let previousResponseJson = '';
 let chatType = defaultChatType;
 
 const loadDataFromLocalStorage = () => {
@@ -49,7 +50,12 @@ const loadDataFromLocalStorage = () => {
     chatContainer.innerHTML = localStorage.getItem('all-chats') || defaultText;
     chatContainer.scrollTo(0, chatContainer.scrollHeight);
     sessionId = localStorage.getItem('session-id');
-    previousResponse = localStorage.getItem('previous-response');
+    previousResponseJson = localStorage.getItem('previous-response');
+    previousResponse = JSON.parse(previousResponseJson);
+    const chatCountValue = document.getElementById('chat-count').value;
+    while (previousResponse.length > 2 * chatCountValue) {
+        previousResponse.shift();
+    }
     document.querySelector('#chat-types').value = chatType;
 }
 
@@ -65,6 +71,7 @@ const createElement = (html, className) => {
 const getChatResponse = (incomingChatDiv) => {
     const symplrChatUrl = document.getElementById('symplr-chat-answer-url').value;
     chatType = localStorage.getItem('chat-type') || defaultChatType;
+    const chatCountValue = document.getElementById('chat-count').value;
     fetch(symplrChatUrl, {
         method: 'POST',
         headers: {
@@ -72,7 +79,7 @@ const getChatResponse = (incomingChatDiv) => {
         },
         body: JSON.stringify({
             prompt: userText,
-            previousResponse: previousResponse,
+            previousResponse: previousResponseJson,
             sessionId: sessionId,
             chatType: chatType,
         })
@@ -101,12 +108,20 @@ const getChatResponse = (incomingChatDiv) => {
             incomingChatDiv.querySelector('.chat-details').appendChild(answer);
             chatContainer.scrollTo(0, chatContainer.scrollHeight);
             localStorage.setItem('all-chats', chatContainer.innerHTML);
-            previousResponse = '[{"role": "user", "content": "' + userText + '"},{"role": "assistant", "content": ' + JSON.stringify(data['answer']) + '}]';
-            localStorage.setItem('previous-response', previousResponse);
+            if (null === previousResponse) {
+                previousResponse = [];
+            }
+            previousResponse.push({"role": "user", "content": userText},{"role": "assistant", "content":JSON.stringify(data['answer'])});
+            while (previousResponse.length > 2 * chatCountValue) {
+                previousResponse.shift();
+            }
+            previousResponseJson = JSON.stringify(previousResponse);
+            localStorage.setItem('previous-response', previousResponseJson);
             localStorage.setItem('session-id', data['id']);
         }
     })
     .catch(error => {
+        console.error(error);
         const fragment = document.createElement('div');
         const pElement = document.createElement('p');
         pElement.classList.add('error');
@@ -191,21 +206,15 @@ settingsButton.addEventListener('click', () => {
 });
 
 if(historiesButton){
-historiesButton.addEventListener('click', ()=> {
-    let currentURL = document.getElementById("symplr-chat-history-url").value;
-    window.open(currentURL, '_blank');
-});
+    historiesButton.addEventListener('click', ()=> {
+        let currentURL = document.getElementById("symplr-chat-history-url").value;
+        window.open(currentURL, '_blank');
+    });
 }
+
 faqButton.addEventListener('click', function(){
-        var currentURL = window.location.href;
-        var parts = currentURL.split('/');
-        var lastPart = parts[parts.length - 1];
-        var newLastPart = 'faq';
-        parts[parts.length - 1] = newLastPart;
-        var newURL = parts.join('/');
-        window.location.href = newURL;
-    }
-);
+    window.location.href = document.getElementById('symplr-faq-url').value;
+});
 
 chatInput.addEventListener('input', () => {
     chatInput.style.height = `${initialHeight}px`;
@@ -237,6 +246,7 @@ settingsSaveButton.addEventListener('click', () => {
     const newPasswordOne = document.getElementById('new-password-one').value;
     const newPasswordTwo = document.getElementById('new-password-two').value;
     const newUserEmail = document.getElementById('new-user-email').value;
+    const chatCount = document.getElementById('new-chat-count').value;
     const isAdmin = document.getElementById('is-admin');
     const passwordErrorMessage = document.getElementById('password-error-message');
     if (chatGptApiToken === '') {
@@ -281,6 +291,7 @@ settingsSaveButton.addEventListener('click', () => {
             newPasswordOne: newPasswordOne,
             newPasswordTwo: newPasswordTwo,
             newUserEmail: newUserEmail,
+            chatCount: chatCount,
             isAdmin: isAdmin.checked,
         })
     })
