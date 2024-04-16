@@ -24,9 +24,13 @@ class Unit
     #[ORM\OneToMany(mappedBy: 'unit', targetEntity: User::class)]
     private Collection $users;
 
+    #[ORM\Column]
+    private ?int $chatCount = 3;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->chatCount = 3;
     }
 
     public function getId(): ?int
@@ -84,6 +88,18 @@ class Unit
                 $user->setUnit(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getChatCount(): ?int
+    {
+        return $this->chatCount;
+    }
+
+    public function setChatCount(int $chatCount): static
+    {
+        $this->chatCount = $chatCount;
 
         return $this;
     }

@@ -10,6 +10,7 @@
                 {% if is_granted('ROLE_ADMIN') %}
                     <span class="tablinks" data-tab="tab1">ChatGPT API Token</span>
                     <span class="tablinks" data-tab="tab3">Benutzer hinzufügen</span>
+                    <span class="tablinks" data-tab="tab4">Anzahl Chats</span>
                 {% endif %}
             </div>
             {% if is_granted('ROLE_ADMIN') %}
@@ -33,6 +34,11 @@
                     <input type="checkbox" id="is-admin" value="admin">
                     <label>Ist Admin Benutzer</label>
                     <div class="error-message" id="email-error-message"></div>
+                </div>
+                <div id="tab4" class="tabcontent">
+                    <h3>Anzahl Chats</h3>
+                    <input type="number" id="new-chat-count" placeholder="Anzahl Chatverläufe" value="{{ chatCount }}">
+                    <div class="error-message" id="chat-count-error-message"></div>
                 </div>
             {% endif %}
         </div>
