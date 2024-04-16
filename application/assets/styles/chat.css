@@ -246,6 +246,8 @@ span.material-symbols-rounded {
     border-radius: 4px;
     background: var(--incoming-chat-bg);
     border: 1px solid var(--incoming-chat-border);
+    cursor: pointer;
+    user-select: none;
 }
 
 .modal {
