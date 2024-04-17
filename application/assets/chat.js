@@ -51,7 +51,7 @@ const loadDataFromLocalStorage = () => {
     chatContainer.scrollTo(0, chatContainer.scrollHeight);
     sessionId = localStorage.getItem('session-id');
     previousResponseJson = localStorage.getItem('previous-response');
-    previousResponse = JSON.parse(previousResponseJson);
+    previousResponse = JSON.parse(previousResponseJson) || '';
     const chatCountValue = document.getElementById('chat-count').value;
     if (null !== previousResponse) {
         while (previousResponse.length > 2 * chatCountValue) {
