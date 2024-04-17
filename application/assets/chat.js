@@ -53,8 +53,10 @@ const loadDataFromLocalStorage = () => {
     previousResponseJson = localStorage.getItem('previous-response');
     previousResponse = JSON.parse(previousResponseJson);
     const chatCountValue = document.getElementById('chat-count').value;
-    while (previousResponse.length > 2 * chatCountValue) {
-        previousResponse.shift();
+    if (null !== previousResponse) {
+        while (previousResponse.length > 2 * chatCountValue) {
+            previousResponse.shift();
+        }
     }
     document.querySelector('#chat-types').value = chatType;
 }
