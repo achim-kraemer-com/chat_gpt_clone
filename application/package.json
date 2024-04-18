@@ -18,5 +18,7 @@
         "watch": "encore dev --watch",
         "build": "encore production --progress"
     },
-    "dependencies": {}
+    "dependencies": {
+        "@lcdp/offline-plugin": "^5.1.1"
+    }
 }

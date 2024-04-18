@@ -1,0 +1,14 @@
+{
+  "name": "prompt privacy portal",
+  "short_name": "prompt privacy portal",
+  "description": "prompt privacy portal",
+  "version": "1.0",
+  "manifest_version": 2,
+  "start_url": "https://ppp.mso.digital/login",
+  "permissions": ["activeTab"],
+  "icons": {
+    "16": "favicon-16x16.png",
+    "32": "favicon-32x32.png",
+    "96": "favicon-96x96.png"
+  }
+}
