@@ -14,17 +14,17 @@ const manifestOptions = {
     start_url: "/chat/", // Diese URL wird beim öffnen der App geladen. Könnte z.b. auch /?pwa=true sein falls man es tracken möchte.
     icons: [
         {
-            src: "/build/images/favicon/android-chrome-192x192.png",
+            src: "/build/images/chatgpt-mso-digital_favicon_io/android-chrome-192x192.png",
             sizes: "192x192",
             type: "image/png",
         },
         {
-            src: "/build/images/favicon/android-chrome-512x512.png",
+            src: "/build/images/chatgpt-mso-digital_favicon_io/android-chrome-512x512.png",
             sizes: "512x512",
             type: "image/png",
         },
         {
-            src: "/build/images/favicon/android-chrome-512x512.png",
+            src: "/build/images/chatgpt-mso-digital_favicon_io/android-chrome-512x512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any maskable", // Leg fest das das Icon maskierbar ist, also von Android in den diversen Stilen zugeschnitten werden darf. @see https://maskable.app/editor
