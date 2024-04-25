@@ -110,7 +110,7 @@ const getChatResponse = (incomingChatDiv) => {
             incomingChatDiv.querySelector('.chat-details').appendChild(answer);
             chatContainer.scrollTo(0, chatContainer.scrollHeight);
             localStorage.setItem('all-chats', chatContainer.innerHTML);
-            if (null === previousResponse) {
+            if (null === previousResponse || '' === previousResponse) {
                 previousResponse = [];
             }
             previousResponse.push({"role": "user", "content": userText},{"role": "assistant", "content":JSON.stringify(data['answer'])});
