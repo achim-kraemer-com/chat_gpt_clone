@@ -57,7 +57,6 @@ class ChatController extends AbstractController
             }
             $answer['question'] = $prompt['prompt'];
         } catch (\Exception $e) {
-            dd($e->getMessage());
             return new JsonResponse([
                 'error' => true,
                 'message' => 'Ein Fehler ist aufgetreten'
