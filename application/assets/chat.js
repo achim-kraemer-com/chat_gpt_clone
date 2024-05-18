@@ -22,7 +22,7 @@ const settingsSaveButton = document.getElementById("settings-save-btn");
 const settingsCloseButton = document.getElementById("settings-close-btn");
 
 settingsModal.style.display = "none";
-const defaultChatType = 'gpt-4-1106-preview';
+const defaultChatType = 'gpt-4o';
 let userText = null;
 const initialHeight = chatInput.scrollHeight;
 let sessionId = null;
