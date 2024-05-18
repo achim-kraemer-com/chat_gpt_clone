@@ -42,6 +42,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: ChatHistory::class, orphanRemoval: true)]
     private Collection $chatHistories;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $customerInstruction = null;
+
     public function __construct()
     {
         $this->chatHistories = new ArrayCollection();
@@ -167,6 +170,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $chatHistory->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCustomerInstruction(): ?string
+    {
+        return $this->customerInstruction;
+    }
+
+    public function setCustomerInstruction(?string $customerInstruction): static
+    {
+        $this->customerInstruction = $customerInstruction;
 
         return $this;
     }
