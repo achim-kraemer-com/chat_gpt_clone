@@ -33,11 +33,13 @@ class ChatController extends AbstractController
         $unit = $user->getUnit();
         $chatGptApiToken = $unit->getChatGptApiToken();
         $chatCount = $unit->getChatCount();
+        $customerInstruction = $user->getCustomerInstruction();
 
         return $this->render('chat/index.html.twig', [
             'form' => $form->createView(),
             'chatGptApiToken' => $chatGptApiToken,
             'chatCount' => $chatCount,
+            'customerInstruction' => $customerInstruction,
         ]);
     }
 
@@ -55,6 +57,7 @@ class ChatController extends AbstractController
             }
             $answer['question'] = $prompt['prompt'];
         } catch (\Exception $e) {
+            dd($e->getMessage());
             return new JsonResponse([
                 'error' => true,
                 'message' => 'Ein Fehler ist aufgetreten'
@@ -111,6 +114,11 @@ class ChatController extends AbstractController
             $entityManager->flush();
 
             $this->sendPasswordEmail($settings['newUserEmail'], $password);
+        }
+        if ($settings['customerInstruction']) {
+            $user->setCustomerInstruction($settings['customerInstruction']);
+            $entityManager->persist($user);
+            $entityManager->flush();
         }
 
         return new JsonResponse(true);

@@ -248,6 +248,7 @@ settingsSaveButton.addEventListener('click', () => {
     const newPasswordOne = document.getElementById('new-password-one').value;
     const newPasswordTwo = document.getElementById('new-password-two').value;
     const newUserEmail = document.getElementById('new-user-email').value;
+    const customerInstruction = document.getElementById('custom-instruction').value;
     const chatCount = document.getElementById('new-chat-count').value;
     const isAdmin = document.getElementById('is-admin');
     const passwordErrorMessage = document.getElementById('password-error-message');
@@ -293,6 +294,7 @@ settingsSaveButton.addEventListener('click', () => {
             newPasswordOne: newPasswordOne,
             newPasswordTwo: newPasswordTwo,
             newUserEmail: newUserEmail,
+            customerInstruction: customerInstruction,
             chatCount: chatCount,
             isAdmin: isAdmin.checked,
         })

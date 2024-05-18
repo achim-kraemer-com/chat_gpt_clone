@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Entity\ChatHistory;
 use App\Entity\User;
+use App\Repository\ChatHistoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
@@ -19,17 +20,20 @@ class ChatService
     private HttpClientInterface $httpClient;
     private ContainerBagInterface $params;
     private EntityManagerInterface $entityManager;
+    private ChatHistoryRepository $chatHistoryRepository;
 
     public function __construct(
         Security $security,
         HttpClientInterface $httpClient,
         ContainerBagInterface $params,
+        ChatHistoryRepository $chatHistoryRepository,
         EntityManagerInterface $entityManager
     ) {
         $this->security = $security;
         $this->httpClient = $httpClient;
         $this->params = $params;
         $this->entityManager = $entityManager;
+        $this->chatHistoryRepository = $chatHistoryRepository;
     }
 
     public function getAnswer(string $prompt, string $chatType, ?string $previousResponse, ?string $sessionId): array|\Exception
@@ -47,18 +51,16 @@ class ChatService
         $resultArray = [];
         $messages = [];
 
-        try {
-            $previousResponseArray = \json_decode($previousResponse ?? '[{}]', true);
-        } catch (\Exception $exception) {
-            dd($exception);
+        $customerInstruction = $user->getCustomerInstruction();
+        if ('' !== $customerInstruction) {
+            $messages[] = ['role' => 'system', 'content' => $customerInstruction];
         }
 
-        if (\is_array($previousResponseArray)) {
-            foreach ($previousResponseArray as $previousResponseItem) {
-                if (\array_key_exists('role', $previousResponseItem)) {
-                    $messages[] = ['role' => $previousResponseItem['role'], 'content' => $previousResponseItem['content']];
-                }
-            }
+        $chatCount = $user->getUnit()->getChatCount() ?? 0;
+        $chatHistories = $this->chatHistoryRepository->getByUserTypeAndLimit($user, $chatType, $chatCount);
+        foreach ($chatHistories as $chatHistory) {
+            $messages[] = ['role' => 'user', 'content' => $chatHistory->getRequest()];
+            $messages[] = ['role' => 'assistant', 'content' => $chatHistory->getResponse()];
         }
 
         $chatHistory = new ChatHistory();

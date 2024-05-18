@@ -11,6 +11,7 @@
                     <span class="tablinks" data-tab="tab1">ChatGPT API Token</span>
                     <span class="tablinks" data-tab="tab3">Benutzer hinzufügen</span>
                     <span class="tablinks" data-tab="tab4">Anzahl Chats</span>
+                    <span class="tablinks" data-tab="tab5">Custom Instruction</span>
                 {% endif %}
             </div>
             {% if is_granted('ROLE_ADMIN') %}
@@ -41,6 +42,11 @@
                     <div class="error-message" id="chat-count-error-message"></div>
                 </div>
             {% endif %}
+            <div id="tab5" class="tabcontent">
+                <h3>Custom Instruction</h3>
+                <textarea id="custom-instruction" maxlength="255">{{ customerInstruction }}</textarea>
+                <div class="error-message" id="custom-instruction-error-message"></div>
+            </div>
         </div>
         <div class="modal-footer">
             <span id="settings-save-btn" class="material-symbols-rounded">save</span>
