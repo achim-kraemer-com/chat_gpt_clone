@@ -34,6 +34,12 @@
                     <input type="text" id="new-user-email" placeholder="E-Mail Adresse">
                     <input type="checkbox" id="is-admin" value="admin">
                     <label>Ist Admin Benutzer</label>
+                    <div class="text">
+                        Aktive Benutzer der Abteilung:
+                        <div class="text">
+                            {{ users|join(', ') }}
+                        </div>
+                    </div>
                     <div class="error-message" id="email-error-message"></div>
                 </div>
                 <div id="tab4" class="tabcontent">

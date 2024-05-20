@@ -7,6 +7,7 @@
 
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/chat.css';
+import {showNotification} from "./helper";
 
 const chatInput = document.querySelector('#chat-input');
 const sendButton = document.querySelector('#send-btn');
@@ -302,8 +303,11 @@ settingsSaveButton.addEventListener('click', () => {
     .then(response => response.json())
     .then(data => {
         settingsModal.style.display = 'none';
+        document.getElementById('new-user-email').value = '';
+        showNotification('Alle Änderungen gespeichert');
     })
     .catch(error => {
+        showNotification('Fehler beim Speichern der Änderungen - Versuchen Sie es erneut!');
         pElement.classList.add('error');
         pElement.textContent = 'Ooops! Something went wrong while retrieving the response. Please try again.';
     });

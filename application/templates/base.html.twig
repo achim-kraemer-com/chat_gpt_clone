@@ -16,9 +16,12 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     </head>
     <body>
-    <div class="page-wrapper">
-        {% block body %}{% endblock %}
-    </div>
-    {% block javascripts %}{{ encore_entry_script_tags('app') }}{% endblock %}
+        <div class="page-wrapper">
+            {% block body %}{% endblock %}
+            <div id="symplr-notification" class="notification-box">
+                <span id="symplr-message"></span>
+            </div>
+        </div>
+        {% block javascripts %}{{ encore_entry_script_tags('app') }}{% endblock %}
     </body>
 </html>

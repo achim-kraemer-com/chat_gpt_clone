@@ -31,6 +31,11 @@ class ChatController extends AbstractController
         $form = $this->createForm(ChatType::class);
         $user = $this->getUser();
         $unit = $user->getUnit();
+        $users = $unit->getUsers();
+        $userArray = [];
+        foreach ($users as $userValue) {
+            $userArray[]= $userValue->getEmail();
+        }
         $chatGptApiToken = $unit->getChatGptApiToken();
         $chatCount = $unit->getChatCount();
         $customerInstruction = $user->getCustomerInstruction();
@@ -40,6 +45,7 @@ class ChatController extends AbstractController
             'chatGptApiToken' => $chatGptApiToken,
             'chatCount' => $chatCount,
             'customerInstruction' => $customerInstruction,
+            'users' => $userArray,
         ]);
     }
 
