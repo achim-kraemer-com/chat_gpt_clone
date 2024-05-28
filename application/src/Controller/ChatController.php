@@ -145,7 +145,7 @@ class ChatController extends AbstractController
         $email = (new TemplatedEmail())
             ->from('chat@notifications.mso-digital.de')
             ->to($emailAddress)
-            ->subject('Ihr neues Passwort')
+            ->subject('Deine Zugangsdaten für das prompt privacy portal sind da!')
             ->htmlTemplate('emails/password.html.twig')
             ->context([
                 'user' => [
