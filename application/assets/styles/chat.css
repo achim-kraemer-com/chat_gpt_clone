@@ -290,6 +290,10 @@ span.material-symbols-rounded {
     color: var(--icon-color);
 }
 
+.user-list-element {
+    padding-right: 15px;
+}
+
 .modal-body {
     padding: 20px;
 }

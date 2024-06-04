@@ -36,11 +36,13 @@
                     <label>Ist Admin Benutzer</label>
                     <div class="text">
                         Aktive Benutzer der Abteilung:
-                        {% for key, email in users %}
-                            <div class="text" id="{{ key }}">
-                                {{ email }} <button type="button" class="delete-user-btn" value="{{ key }}" id="{{ key }}">X</button>
-                            </div>
-                        {% endfor %}
+                        <div>
+                            {% for key, email in users %}
+                                <span class="text user-list-element" id="{{ key }}">
+                                    {{ email }} <button type="button" class="delete-user-btn" value="{{ key }}" id="{{ key }}">X</button>
+                                </span>
+                            {% endfor %}
+                        </div>
                     </div>
                     <div class="error-message" id="email-error-message"></div>
                 </div>
