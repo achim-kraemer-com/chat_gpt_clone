@@ -34,7 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(type: 'boolean')]
-    private $isVerified = false;
+    private bool $isVerified = false;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
@@ -46,9 +46,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $customerInstruction = null;
 
+    #[ORM\Column]
+    private ?int $chatCount = 3;
+
     public function __construct()
     {
         $this->chatHistories = new ArrayCollection();
+        $this->chatCount = 3;
     }
 
     public function getId(): ?int
@@ -183,6 +187,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCustomerInstruction(?string $customerInstruction): static
     {
         $this->customerInstruction = $customerInstruction;
+
+        return $this;
+    }
+
+    public function getChatCount(): ?int
+    {
+        return $this->chatCount;
+    }
+
+    public function setChatCount(int $chatCount): static
+    {
+        $this->chatCount = $chatCount;
 
         return $this;
     }

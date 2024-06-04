@@ -10,9 +10,9 @@
                 {% if is_granted('ROLE_ADMIN') %}
                     <span class="tablinks" data-tab="tab1">ChatGPT API Token</span>
                     <span class="tablinks" data-tab="tab3">Benutzer hinzufügen</span>
-                    <span class="tablinks" data-tab="tab4">Anzahl Chats</span>
-                    <span class="tablinks" data-tab="tab5">Custom Instruction</span>
                 {% endif %}
+                <span class="tablinks" data-tab="tab4">Anzahl Chats</span>
+                <span class="tablinks" data-tab="tab5">Custom Instruction</span>
             </div>
             {% if is_granted('ROLE_ADMIN') %}
                 <div id="tab1" class="tabcontent">
@@ -36,18 +36,20 @@
                     <label>Ist Admin Benutzer</label>
                     <div class="text">
                         Aktive Benutzer der Abteilung:
-                        <div class="text">
-                            {{ users|join(', ') }}
-                        </div>
+                        {% for key, email in users %}
+                            <div class="text" id="{{ key }}">
+                                {{ email }} <button type="button" class="delete-user-btn" value="{{ key }}" id="{{ key }}">X</button>
+                            </div>
+                        {% endfor %}
                     </div>
                     <div class="error-message" id="email-error-message"></div>
                 </div>
-                <div id="tab4" class="tabcontent">
-                    <h3>Anzahl Chats</h3>
-                    <input type="number" id="new-chat-count" placeholder="Anzahl Chatverläufe" value="{{ chatCount }}">
-                    <div class="error-message" id="chat-count-error-message"></div>
-                </div>
             {% endif %}
+            <div id="tab4" class="tabcontent">
+                <h3>Anzahl Chats</h3>
+                <input type="number" id="new-chat-count" placeholder="Anzahl Chatverläufe" value="{{ chatCount }}">
+                <div class="error-message" id="chat-count-error-message"></div>
+            </div>
             <div id="tab5" class="tabcontent">
                 <h3>Custom Instruction</h3>
                 <textarea id="custom-instruction" maxlength="1500">{{ customerInstruction }}</textarea>

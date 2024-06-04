@@ -57,7 +57,7 @@ class ChatService
         }
 
         if ('dall-e-3' !== $chatType) {
-            $chatCount = $user->getUnit()->getChatCount() ?? 0;
+            $chatCount = $user->getChatCount() ?? 0;
             $chatHistories = $this->chatHistoryRepository->getByUserTypeAndLimit($user, $chatType, $chatCount);
             foreach ($chatHistories as $chatHistory) {
                 $messages[] = ['role' => 'user', 'content' => $chatHistory->getRequest()];

@@ -272,6 +272,10 @@ span.material-symbols-rounded {
     max-width: 70%;
 }
 
+.delete-user-btn {
+    padding: 1px 5px;
+}
+
 .modal-header {
     display: flex;
     justify-content: space-between;

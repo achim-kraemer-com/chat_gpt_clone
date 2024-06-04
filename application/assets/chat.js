@@ -21,6 +21,7 @@ const chatTypeSelection = document.querySelector('#chat-types');
 const settingsModal = document.getElementById("settingsModal");
 const settingsSaveButton = document.getElementById("settings-save-btn");
 const settingsCloseButton = document.getElementById("settings-close-btn");
+const deleteUserButtons = document.querySelectorAll('button.delete-user-btn');
 
 settingsModal.style.display = "none";
 const defaultChatType = 'gpt-4o';
@@ -316,6 +317,35 @@ settingsSaveButton.addEventListener('click', () => {
 
 settingsCloseButton.addEventListener('click', () => {
     settingsModal.style.display = 'none';
+});
+
+const deleteUserUrl = document.getElementById('symplr-delete-user-url').value;
+deleteUserButtons.forEach(deleteUserButton => {
+    deleteUserButton.addEventListener('click', () => {
+        const userConfirmed = confirm('Bist Du sicher, dass Du diese Aktion ausführen möchtest?');
+        if (userConfirmed) {
+            const userId = deleteUserButton.value;
+            fetch(deleteUserUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userId: userId,
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(errorMessage => {
+                            throw new Error(errorMessage);
+                        });
+                    }
+                    const divElement = document.getElementById(userId);
+                    divElement.remove();
+                    return response.json();
+                });
+        }
+    });
 });
 
 const changeChatType = () => {

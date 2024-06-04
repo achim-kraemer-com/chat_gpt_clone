@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\ChatType;
+use App\Repository\UserRepository;
 use App\Service\ChatService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -34,10 +35,10 @@ class ChatController extends AbstractController
         $users = $unit->getUsers();
         $userArray = [];
         foreach ($users as $userValue) {
-            $userArray[]= $userValue->getEmail();
+            $userArray[$userValue->getId()]= $userValue->getEmail();
         }
         $chatGptApiToken = $unit->getChatGptApiToken();
-        $chatCount = $unit->getChatCount();
+        $chatCount = $user->getChatCount();
         $customerInstruction = $user->getCustomerInstruction();
 
         return $this->render('chat/index.html.twig', [
@@ -72,6 +73,23 @@ class ChatController extends AbstractController
         return new JsonResponse($answer);
     }
 
+    #[Route('delete-user', name: 'app_delete_user', methods: ['POST'])]
+    public function deleteUser(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $returnValue = true;
+        try {
+            $settings = \json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+            $userId = (int)$settings['userId'];
+            $user = $userRepository->findOneBy(['id' => $userId]);
+            $entityManager->remove($user);
+            $entityManager->flush();
+        } catch (\Exception $exception) {
+            $returnValue = false;
+        }
+
+        return new JsonResponse($returnValue);
+    }
+
     #[Route('/save-settings', name: 'app_save_settings', methods: ['POST'])]
     public function saveSettings(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -80,7 +98,7 @@ class ChatController extends AbstractController
         $chatGptApiToken = $unit->getChatGptApiToken();
         $settings = \json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $chatCount = (int) $settings['chatCount'];
-        $unit->setChatCount($chatCount);
+        $user->setChatCount($chatCount);
         $entityManager->persist($unit);
         $entityManager->flush();
         if ($chatGptApiToken !== $settings['chatGptApiToken']) {
