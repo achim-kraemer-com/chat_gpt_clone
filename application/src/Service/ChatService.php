@@ -59,7 +59,8 @@ class ChatService
         if ('dall-e-3' !== $chatType) {
             $chatCount = $user->getChatCount() ?? 0;
             $chatHistories = $this->chatHistoryRepository->getByUserTypeAndLimit($user, $chatType, $chatCount);
-            foreach ($chatHistories as $chatHistory) {
+            $chatHistoriesReverse = \array_reverse($chatHistories);
+            foreach ($chatHistoriesReverse as $chatHistory) {
                 $messages[] = ['role' => 'user', 'content' => $chatHistory->getRequest()];
                 $messages[] = ['role' => 'assistant', 'content' => $chatHistory->getResponse()];
             }
