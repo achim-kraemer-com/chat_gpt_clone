@@ -24,7 +24,7 @@ const settingsCloseButton = document.getElementById("settings-close-btn");
 const deleteUserButtons = document.querySelectorAll('button.delete-user-btn');
 
 settingsModal.style.display = "none";
-const defaultChatType = 'gpt-4o';
+const defaultChatType = 'o1-preview';
 let userText = null;
 const initialHeight = chatInput.scrollHeight;
 let sessionId = null;
