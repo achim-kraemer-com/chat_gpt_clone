@@ -7,6 +7,7 @@ namespace App\Service;
 use App\Entity\ChatHistory;
 use App\Entity\User;
 use App\Repository\ChatHistoryRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
@@ -21,12 +22,14 @@ class ChatService
     private ContainerBagInterface $params;
     private EntityManagerInterface $entityManager;
     private ChatHistoryRepository $chatHistoryRepository;
+    private UserRepository $userRepository;
 
     public function __construct(
         Security $security,
         HttpClientInterface $httpClient,
         ContainerBagInterface $params,
         ChatHistoryRepository $chatHistoryRepository,
+        UserRepository $userRepository,
         EntityManagerInterface $entityManager
     ) {
         $this->security = $security;
@@ -34,14 +37,16 @@ class ChatService
         $this->params = $params;
         $this->entityManager = $entityManager;
         $this->chatHistoryRepository = $chatHistoryRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function getAnswer(string $prompt, string $chatType, ?string $previousResponse, ?string $sessionId): array|\Exception
     {
         $user = $this->security->getUser();
         if (!$user instanceof User) {
-            return [];
+            $user = $this->userRepository->findOneBy(['id' => 1]);
         }
+
         $unit = $user->getUnit();
         $chatGPTApiKey = $unit->getChatGptApiToken();
         if ($chatGPTApiKey === '') {
